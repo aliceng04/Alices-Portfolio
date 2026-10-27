@@ -1,0 +1,36 @@
+---
+// A user story with acceptance criteria in Given / When / Then form.
+// <UserStory id="US-2" title="…" as="…" want="…" soThat="…" priority="P1"
+//   criteria={[{ id: 'AC-2.1', given: '…', when: '…', then: '…' }]} />
+interface Criterion { id: string; given: string; when?: string; then: string }
+interface Props { id: string; title: string; as: string; want: string; soThat: string; priority?: string; source?: string; criteria: Criterion[] }
+const { id, title, as, want, soThat, priority, source, criteria } = Astro.props;
+---
+<figure class="block-wide overflow-hidden rounded-md border border-hairline bg-canvas">
+  <div class="flex flex-col gap-4 p-6 sm:p-8">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="inline-flex h-7 items-center rounded-full bg-primary px-3 t-label text-on-primary">{id}</span>
+      {priority && <span class="inline-flex h-7 items-center rounded-full bg-canvas-soft px-3 t-label text-muted">{priority}</span>}
+      <span class="t-title ml-1">{title}</span>
+    </div>
+    <p class="t-lead">
+      <span class="font-semibold text-accent">As</span> {as}, <span class="font-semibold text-accent">I want</span> {want}, <span class="font-semibold text-accent">so that</span> {soThat}.
+    </p>
+  </div>
+  <div class="border-t border-hairline bg-canvas-soft p-6 sm:p-8">
+    <p class="t-label mb-4 text-muted">Acceptance criteria</p>
+    <ol class="flex flex-col gap-4">
+      {criteria.map((c) => (
+        <li class="grid gap-2 sm:grid-cols-[72px_minmax(0,1fr)] sm:gap-4">
+          <span class="t-label pt-0.5">{c.id}</span>
+          <div class="flex flex-col gap-1.5 t-body text-ink-soft">
+            <p><span class="t-label mr-2 inline-block w-12 text-muted">GIVEN</span>{c.given}</p>
+            {c.when && <p><span class="t-label mr-2 inline-block w-12 text-muted">WHEN</span>{c.when}</p>}
+            <p><span class="t-label mr-2 inline-block w-12 text-accent">THEN</span>{c.then}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    {source && <p class="t-caption mt-6 text-muted">{source}</p>}
+  </div>
+</figure>

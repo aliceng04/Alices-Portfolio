@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from '../Icon.astro';
+import { url } from '../../lib/url';
+
+// Built in code: src="/prototypes/<name>/" (a folder in public/).
+// Built in Figma: figma="https://www.figma.com/proto/…".
+// Nothing loads until the visitor presses play.
+interface Props {
+  title: string;
+  description?: string;
+  src?: string;
+  figma?: string;
+  device?: 'phone' | 'browser';
+  preview?: ImageMetadata;
+}
+const { title, description, src, figma, device = 'phone', preview } = Astro.props;
+const fullUrl = figma ?? url(src ?? '/');
+const embedUrl = figma ? `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(figma)}` : fullUrl;
+const eyebrow = figma ? 'Interactive prototype · Figma' : 'Interactive prototype · built in code';
+const phone = device === 'phone';
+---
+<section class="block-wide flex flex-col items-center gap-8 rounded-md border border-accent-soft-border bg-accent-soft p-6 lg:flex-row lg:gap-16 lg:p-12" data-prototype data-embed={embedUrl}>
+  <div class="flex w-full flex-1 flex-col gap-4">
+    <p class="t-caption text-muted">{eyebrow}</p>
+    <h3 class="t-h3">{title}</h3>
+    {description && <p class="t-body text-muted">{description}</p>}
+    <div class="mt-2 flex flex-col gap-3 sm:flex-row">
+      <button type="button" data-prototype-play class="hidden h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary px-6 t-link text-on-primary hover:opacity-85 lg:inline-flex">
+        <Icon name="play" size={16} />Try prototype
+      </button>
+      <a href={fullUrl} target="_blank" rel="noopener" class="inline-flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-primary px-6 t-link text-on-primary lg:border lg:border-hairline lg:bg-canvas lg:text-ink lg:hover:bg-canvas-soft">
+        <Icon name="maximize" size={16} />Open fullscreen
+      </a>
+    </div>
+  </div>
+
+  <div class:list={['shrink-0 bg-device p-2.5', phone ? 'h-[580px] w-[282px] rounded-[44px] lg:h-[660px] lg:w-[320px] lg:rounded-[48px]' : 'aspect-[16/10] w-full max-w-[560px] rounded-md pt-8']}>
+    <div class:list={['relative flex h-full w-full items-center justify-center overflow-hidden bg-media', phone ? 'rounded-[36px] lg:rounded-[38px]' : 'rounded-sm']} data-prototype-screen>
+      {preview && <Image src={preview} alt="" widths={[320, 640]} sizes="320px" class="absolute inset-0 h-full w-full object-cover" />}
+      <button type="button" data-prototype-play aria-label={`Play prototype: ${title}`} class="relative inline-flex size-16 items-center justify-center rounded-full bg-canvas text-ink transition hover:scale-105">
+        <Icon name="play" size={24} />
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-prototype]').forEach((root) => {
+    const screen = root.querySelector<HTMLElement>('[data-prototype-screen]')!;
+    root.querySelectorAll('[data-prototype-play]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        if (screen.querySelector('iframe')) return;
+        const frame = document.createElement('iframe');
+        frame.src = root.dataset.embed!;
+        frame.title = 'Interactive prototype';
+        frame.className = 'h-full w-full border-0 bg-canvas';
+        frame.allow = 'fullscreen';
+        screen.replaceChildren(frame);
+      }),
+    );
+  });
+</script>

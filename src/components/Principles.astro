@@ -1,0 +1,82 @@
+---
+import { profile } from '../data/profile';
+// The three laws behind every product decision, in priority order.
+// On scroll the words land, each card slides in and its icon draws itself; then a highlight walks 01 → 02 → 03 on a loop.
+const icons = [
+  // Useful: a target.
+  '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+  // Intuitive: a path that finds its way.
+  '<path d="M4 18c3 0 4-4 8-4s5-8 8-8"/><circle cx="4" cy="18" r="1.5"/><path d="M16 6h4v4"/>',
+  // Aesthetic: a cut gem.
+  '<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18M9 4l3 16 3-16"/>',
+];
+---
+<section class="mx-auto max-w-[1120px] px-4 pb-20 lg:px-0 lg:pb-30" data-laws>
+  <div class="mb-6 flex flex-col gap-2 lg:mb-8 lg:flex-row lg:items-end lg:justify-between lg:gap-8" data-reveal>
+    <div class="flex flex-col gap-2">
+      <span class="t-label text-accent">How I build products</span>
+      <h2 class="t-h2">
+        {profile.principles.map((p, i) => <><span class="law-word" style={`--d:${0.1 + i * 0.15}s`}>{p.name}<span class="text-accent">.</span></span>{' '}</>)}
+      </h2>
+    </div>
+    <p class="t-small max-w-[320px] text-muted lg:text-right">In that order. Each law only counts once the one before it is true.</p>
+  </div>
+
+  <ol class="grid gap-3 lg:grid-cols-3 lg:gap-4">
+    {profile.principles.map((p, i) => (
+      <li class="law card-lift group relative flex flex-col gap-3 overflow-hidden rounded-sm border border-hairline bg-canvas p-5" data-reveal data-law={i} style={`--delay:${i * 0.12}s;--d:${0.25 + i * 0.12}s`}>
+        <span class="law-bar absolute inset-x-0 top-0 h-[3px] bg-accent"></span>
+        <div class="flex items-center gap-3">
+          <span class="law-icon inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-canvas-soft text-accent">
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[i]} />
+          </span>
+          <h3 class="t-title">{p.name}</h3>
+          <span class="law-num ml-auto t-h4 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+        </div>
+        <p class="t-link">{p.hook}</p>
+        <p class="t-small text-muted">{p.why}</p>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .law { transition: border-color 0.5s, box-shadow 0.5s, transform 0.3s; }
+  .law-num { color: var(--hairline); transition: color 0.5s; }
+  .law-icon { transition: background-color 0.5s, color 0.5s, transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); }
+  .law-bar { transform: scaleX(0); transform-origin: left; transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+
+  /* The highlighted law: orange edge, filled number, icon pops. Hover takes over from the loop. */
+  .law.is-active, .law:hover { border-color: var(--accent); }
+  .law.is-active .law-num, .law:hover .law-num { color: var(--accent); }
+  .law.is-active .law-icon, .law:hover .law-icon { background: var(--accent); color: var(--on-accent); transform: scale(1.08) rotate(-6deg); }
+  .law.is-active .law-bar, .law:hover .law-bar { transform: none; }
+
+  /* Only with JS, so nothing stays hidden without it. */
+  :global(html.js) .law-word { display: inline-block; opacity: 0; transform: translateY(0.35em); transition: opacity 0.6s, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: var(--d); }
+  :global(html.js) .is-in .law-word { opacity: 1; transform: none; }
+  :global(html.js) .law svg > * { stroke-dasharray: 80; stroke-dashoffset: 80; transition: stroke-dashoffset 1.2s ease var(--d); }
+  :global(html.js) .law.is-in svg > * { stroke-dashoffset: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .law-word, :global(html.js) .law svg > * { opacity: 1; transform: none; stroke-dashoffset: 0; transition: none; }
+    .law-icon, .law-bar { transition: none; }
+  }
+</style>
+
+<script>
+  // Walk the highlight 01 → 02 → 03 while the section is on screen; hovering a card pauses the walk.
+  document.querySelectorAll<HTMLElement>('[data-laws]').forEach((root) => {
+    const laws = [...root.querySelectorAll<HTMLElement>('[data-law]')];
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { laws[0]?.classList.add('is-active'); return; }
+    let i = -1, timer: number | undefined, hovering = false;
+    const step = () => { if (hovering) return; i = (i + 1) % laws.length; laws.forEach((l, k) => l.classList.toggle('is-active', k === i)); };
+    const start = () => { if (timer) return; setTimeout(step, 900); timer = window.setInterval(step, 2600); };
+    const stop = () => { clearInterval(timer); timer = undefined; };
+    laws.forEach((l) => {
+      l.addEventListener('mouseenter', () => { hovering = true; laws.forEach((o) => o.classList.remove('is-active')); });
+      l.addEventListener('mouseleave', () => { hovering = false; });
+    });
+    new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()), { threshold: 0.4 }).observe(root);
+  });
+</script>

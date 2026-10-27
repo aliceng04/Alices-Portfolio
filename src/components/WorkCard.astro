@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import Tag from './Tag.astro';
+import { WORK_TYPES } from '../lib/types';
+import { typeTone } from '../lib/tags';
+import { url } from '../lib/url';
+
+// A post with a cover gets the image card; without one, the text card. Never an empty grey box.
+interface Props { entry: CollectionEntry<'work'> }
+const { entry } = Astro.props;
+const { title, summary, type, date, tags, cover, coverAlt } = entry.data;
+const meta = `${WORK_TYPES[type]} · ${date.getFullYear()}`;
+---
+<a
+  href={url(`/work/${entry.id}/`)}
+  data-type={type}
+  data-reveal
+  class:list={[
+    'group card-lift flex flex-col rounded-md',
+    cover ? 'border border-hairline-soft bg-canvas p-2 hover:border-hairline' : 'border border-accent-soft-border bg-accent-soft p-8 hover:bg-accent-soft-hover',
+  ]}
+>
+  {cover && (
+    <div class="overflow-hidden rounded-sm bg-media">
+      <Image src={cover} alt={coverAlt} widths={[560, 1120]} sizes="(min-width: 1024px) 528px, 100vw" class="aspect-[16/10] w-full object-cover transition duration-500 group-hover:scale-[1.02]" />
+    </div>
+  )}
+  <div class:list={['flex flex-1 flex-col gap-3', cover && 'px-4 pb-4 pt-4']}>
+    <div class="flex flex-wrap gap-2">
+      <Tag name={WORK_TYPES[type]} tone={typeTone(type)} solid />
+      {tags.slice(0, 2).map((t) => <Tag name={t} />)}
+    </div>
+    <h3 class:list={[cover ? 't-h4' : 't-h3']}>{title}</h3>
+    <p class="t-body text-muted">{summary}</p>
+    <div class="mt-auto flex items-center pt-2">
+      <span class="t-caption text-muted mr-auto">{meta}</span>
+      <Icon name="arrow-up-right" class="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+    </div>
+  </div>
+</a>

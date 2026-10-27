@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import HeroArt from '../components/HeroArt.astro';
+import Principles from '../components/Principles.astro';
+import Philosophy from '../components/Philosophy.astro';
+import WorkCard from '../components/WorkCard.astro';
+import { profile } from '../data/profile';
+import { getWork } from '../lib/work';
+import { url } from '../lib/url';
+
+const work = await getWork();
+// Featured posts first, then the newest others, up to four.
+const featured = [...work.filter((w) => w.data.featured), ...work.filter((w) => !w.data.featured)].slice(0, 4);
+---
+<Layout>
+  <section class="mx-auto max-w-[1120px] px-4 pb-20 pt-16 lg:px-0 lg:pb-30 lg:pt-30">
+    <h1 class="t-display max-w-[1040px]">{profile.headline.split(' ').map((w, i) => <><span class="hero-word" style={`--i:${i}`}>{w}</span>{' '}</>)}</h1>
+    <p class="t-lead mt-6 max-w-[640px] text-muted lg:mt-8" data-reveal style="--delay:0.5s">{profile.lead}</p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row" data-reveal style="--delay:0.65s">
+      <Button href={url('/work/')}>View my work</Button>
+    </div>
+    <div class="mt-16 lg:mt-20"><HeroArt /></div>
+  </section>
+
+  <Principles />
+  <Philosophy />
+
+  {featured.length > 0 && (
+    <section class="mx-auto max-w-[1120px] px-4 pb-20 lg:px-0 lg:pb-30">
+      <div class="mb-6 flex items-center gap-4 lg:mb-8">
+        <h2 class="t-h2 mr-auto" data-reveal>Selected work.</h2>
+        <span class="hidden sm:contents"><Button href={url('/work/')} variant="soft" size="sm">All work</Button></span>
+      </div>
+      <div class="grid items-start gap-6 lg:grid-cols-2 lg:gap-16">
+        {featured.map((entry) => <WorkCard entry={entry} />)}
+      </div>
+      <div class="mt-6 sm:hidden"><Button href={url('/work/')} variant="soft" full>All work</Button></div>
+    </section>
+  )}
+</Layout>
+

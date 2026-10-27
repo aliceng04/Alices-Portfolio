@@ -1,0 +1,27 @@
+---
+// A swimlane written as data, drawn in the site's own colours (follows dark mode).
+// <Swimlane lanes={['User', 'App']} steps={[['User', 'Gets paid'], ['App', 'Sends check-in']]} />
+// Steps run left to right in the order given; each sits in its owner's lane.
+interface Props { lanes: string[]; steps: [lane: string, label: string][] }
+const { lanes, steps } = Astro.props;
+const cols = steps.length;
+---
+<div class="overflow-x-auto rounded-sm bg-canvas-soft">
+  <div class="grid" style={`min-width: ${96 + cols * 112}px; grid-template-columns: 96px repeat(${cols}, minmax(0, 1fr))`}>
+    {lanes.map((lane, li) => (
+      <>
+        <div class:list={['flex items-center px-3 py-5 t-small font-semibold', li > 0 && 'border-t border-hairline']}>{lane}</div>
+        {steps.map(([owner, label], si) => (
+          <div class:list={['flex items-center p-1.5', li > 0 && 'border-t border-hairline']}>
+            {owner === lane && (
+              <div class="flex w-full flex-col items-start gap-1.5 rounded-sm border border-hairline bg-canvas p-2.5">
+                <span class="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-primary t-label text-on-primary">{si + 1}</span>
+                <span class="t-caption leading-snug">{label}</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </>
+    ))}
+  </div>
+</div>

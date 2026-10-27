@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+// Desktop screens, one at a time, picked with tabs. Plays through on its own while on screen until someone picks a tab.
+// <ScreenTabs screens={[{ src: shot, label: 'Dashboard', alt: '…', caption: '…' }]} />
+interface Screen { src: ImageMetadata; label: string; alt: string; caption?: string }
+interface Props { screens: Screen[] }
+const { screens } = Astro.props;
+---
+<figure class="block-wide" data-screentabs>
+  <div class="mb-4 flex flex-wrap gap-2">
+    {screens.map((s, i) => (
+      <button type="button" data-st-tab={i} aria-pressed={i === 0 ? 'true' : 'false'}
+        class="st-tab relative inline-flex h-9 items-center overflow-hidden rounded-full border border-hairline px-4 t-small font-semibold transition hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-canvas">
+        <span class="relative z-10">{s.label}</span>
+        <span class="st-timer absolute inset-y-0 left-0 bg-white/15" aria-hidden="true"></span>
+      </button>
+    ))}
+  </div>
+  <div class="rounded-md bg-media p-3 sm:p-6">
+    {screens.map((s, i) => (
+      <Image src={s.src} alt={s.alt} widths={[860, 1440]} sizes="(min-width: 1024px) 860px, 100vw" data-st-shot={i}
+        class:list={['st-shot h-auto w-full rounded-[10px] shadow-[0_12px_40px_-12px_rgb(0_0_0/0.25)]', i === 0 && 'is-on']} />
+    ))}
+  </div>
+  <figcaption class="t-small mt-3 min-h-10 text-muted" data-st-caption>{screens[0].caption}</figcaption>
+  <script type="application/json" data-st-captions set:html={JSON.stringify(screens.map((s) => s.caption ?? ''))} />
+</figure>
+
+<style>
+  /* Only the picked screen takes up space, so the frame fits each one. */
+  .st-shot { display: none; }
+  .st-shot.is-on { display: block; animation: st-in 0.55s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  @keyframes st-in { from { opacity: 0; transform: translateY(8px) scale(0.99); } }
+  .st-timer { width: 0; }
+  [data-screentabs].is-playing .st-tab[aria-pressed='true'] .st-timer { animation: st-timer var(--st-dur, 5s) linear forwards; }
+  @keyframes st-timer { to { width: 100%; } }
+  @media (prefers-reduced-motion: reduce) { .st-shot.is-on { animation: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-screentabs]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-st-tab]')];
+    const shots = [...root.querySelectorAll<HTMLElement>('[data-st-shot]')];
+    const caption = root.querySelector<HTMLElement>('[data-st-caption]')!;
+    const captions: string[] = JSON.parse(root.querySelector('[data-st-captions]')!.textContent || '[]');
+    const DUR = 5000;
+    root.style.setProperty('--st-dur', `${DUR}ms`);
+    let i = 0, timer: number | undefined, stopped = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const show = (n: number) => {
+      i = (n + shots.length) % shots.length;
+      tabs.forEach((t, k) => t.setAttribute('aria-pressed', String(k === i)));
+      shots.forEach((s, k) => s.classList.toggle('is-on', k === i));
+      caption.textContent = captions[i];
+    };
+    const play = () => { if (stopped || timer) return; root.classList.add('is-playing'); timer = window.setInterval(() => show(i + 1), DUR); };
+    const pause = () => { clearInterval(timer); timer = undefined; root.classList.remove('is-playing'); };
+    tabs.forEach((t, k) => t.addEventListener('click', () => { stopped = true; pause(); show(k); }));
+    new IntersectionObserver(([e]) => (e.isIntersecting ? play() : pause()), { threshold: 0.5 }).observe(root);
+  });
+</script>

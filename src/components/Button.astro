@@ -1,0 +1,26 @@
+---
+// Stadium pill. primary = ink fill, outline = hairline border, soft = tint fill.
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'soft';
+  size?: 'md' | 'sm';
+  full?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+const { href, variant = 'primary', size = 'md', full = false, class: className, ...rest } = Astro.props;
+const styles = {
+  primary: 'bg-primary text-on-primary hover:opacity-85',
+  outline: 'bg-canvas text-ink border border-hairline hover:bg-canvas-soft',
+  soft: 'bg-canvas-soft text-ink hover:bg-hairline',
+};
+const cls = [
+  'inline-flex items-center justify-center gap-2 rounded-full t-link whitespace-nowrap transition',
+  size === 'md' ? 'h-12 px-6' : 'h-10 px-4',
+  full ? 'w-full' : '',
+  styles[variant],
+  className,
+].join(' ');
+const Tag = href ? 'a' : 'button';
+---
+<Tag href={href} class={cls} {...rest}><slot /></Tag>

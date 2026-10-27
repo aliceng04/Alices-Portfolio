@@ -1,0 +1,24 @@
+---
+// A compact business-model canvas: a grid of titled cells with short points.
+// `highlight` marks the cell that matters most (e.g. the value proposition).
+// <Canvas cells={[{ title: 'Value proposition', points: ['…'], highlight: true }]} />
+interface Cell { title: string; points: string[]; highlight?: boolean; wide?: boolean }
+interface Props { cells: Cell[] }
+const { cells } = Astro.props;
+---
+<div class="block-wide grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  {cells.map((c) => (
+    <section class:list={[
+      'flex flex-col gap-3 rounded-sm border p-5',
+      c.highlight ? 'border-accent bg-canvas' : 'border-hairline bg-canvas',
+      c.wide && 'sm:col-span-2 lg:col-span-3',
+    ]}>
+      <h3 class:list={['t-label', c.highlight ? 'text-accent' : 'text-muted']}>{c.title}</h3>
+      <ul class:list={['flex flex-col gap-2', c.wide && 'sm:grid sm:grid-cols-2 sm:gap-x-6']}>
+        {c.points.map((p) => (
+          <li class="flex gap-2 t-small text-ink-soft"><span class="mt-[7px] size-1.5 shrink-0 rounded-full bg-hairline"></span><span set:html={p} /></li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</div>

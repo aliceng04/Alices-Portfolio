@@ -1,0 +1,241 @@
+---
+title: "Shopay: one order, three products."
+summary: "Scoping a B2C marketplace MVP across a buyer app, a seller platform and an admin platform: the sitemaps, the order flow, the return flow, and the rules that keep money safe in between."
+type: case-study
+date: 2026-10-24
+skills: [Product scoping, Business rules, Flows & sitemaps]
+tags: [E-commerce, Marketplace]
+tldr: "A marketplace is three products that share one order: the buyer's, the seller's and the platform's. I scoped the MVP around a single question, can a real order be paid, shipped, completed, refunded and paid out end to end, and designed every flow so the money is always in a known place."
+cover: ./cover-shopay-v2.png
+coverAlt: "Shopay's Admin Portal, Seller Center and buyer app checkout, side by side."
+featured: true
+---
+
+import buyerHome from './buyer-home.png';
+import buyerVoucher from './buyer-voucher.png';
+import buyerSuccess from './buyer-success.png';
+import buyerShop from './buyer-shop.png';
+import buyerCart from './buyer-cart.png';
+import sellerRegister from './seller-register.png';
+import sellerAddProduct from './seller-add-product-v2.png';
+import sellerOrders from './seller-orders-v2.png';
+import sellerData from './seller-data.png';
+import adminModeration from './admin-moderation.png';
+import adminDispute from './admin-dispute.png';
+import adminPayout from './admin-payout.png';
+
+## 1. The goal of this case study.
+
+Show how I scoped a marketplace, similar to Shopee, into an MVP that can run real orders: which products it needs, how they connect, and the rules that decide what happens to an order, and to the money, at every step.
+
+## 2. Problem statement.
+
+<KeyInsight label="Problem statement">
+In a marketplace the buyer pays a stranger. Buyers need to pay safely and get their money back when something goes wrong; sellers need to sell without building a store; the platform has to prove the loop, and its commission, works.
+</KeyInsight>
+
+So trust is the product. The MVP is not "a shopping app"; it is a promise that the money is held until both sides are happy, and that every problem has a clear owner and a clear deadline.
+
+## 3. One backend, three products.
+
+Each group gets its own front end, all served by one shared backend.
+
+<Canvas cells={[
+  { title: 'End-user app · iOS & Android', highlight: true, points: ['<strong>Buyer:</strong> browse and search, cart from many shops, pay by card', 'Track orders, confirm receipt, request returns', 'Review products, follow shops, collect vouchers'] },
+  { title: 'Seller platform · Seller Center (web)', points: ['<strong>Seller:</strong> open a shop (approved by an admin), list products and stock', 'Process and ship orders, answer return requests', 'Shop vouchers and discounts; balance and weekly payouts'] },
+  { title: 'Admin platform · Admin Portal (web)', points: ['<strong>Operations:</strong> approve and moderate shops and products', '<strong>Customer support:</strong> decide disputes, force refunds', '<strong>Finance:</strong> commission and payouts · <strong>Marketing:</strong> platform vouchers'] },
+]} />
+
+### End-user app.
+
+The buyer's path is short on purpose: find it, trust the shop, pay for everything in one go.
+
+<Gallery
+  images={[
+    { src: buyerHome, alt: 'Home with search, an 11.11 sale banner, category shortcuts and hot deals', caption: '1 · Home: search first, then the platform’s sale, categories and today’s deals.' },
+    { src: buyerCart, alt: 'Cart grouped by shop with a price-change notice and a platform voucher', caption: '2 · Cart: grouped by shop, with price changes flagged before checkout.' },
+    { src: buyerShop, alt: 'Shop page with cover, rating, follow button, follower voucher and picks', caption: '3 · Shop: rating, followers and a follower gift, so a buyer can trust a shop they have never heard of.' },
+    { src: buyerVoucher, alt: 'Select vouchers: one platform voucher, one per shop, and the ones not yet eligible with what is missing', caption: '4 · Vouchers: one platform voucher and one per shop, and each ineligible voucher says exactly what is missing.' },
+    { src: buyerSuccess, alt: 'Order placed: total paid, voucher applied, delivery estimate and the two orders, one per shop', caption: '5 · Order placed: one payment, split into one order per shop.' },
+  ]}
+  caption="End-user app, from home to a placed order. Click any screen to enlarge."
+/>
+
+### Seller platform.
+
+Sellers run the business from Seller Center: see how sales are going, open a shop, list products and ship orders.
+
+<ScreenTabs screens={[
+  { src: sellerData, label: 'Data', alt: 'Seller data dashboard: today’s sales cards, sales by day chart, compare by period and orders by day', caption: 'Data: today against yesterday and last week, sales by day, and this period against the last.' },
+  { src: sellerRegister, label: 'Open a shop', alt: 'Seller registration, step 1 of 3: account details, with the benefits of selling on the left', caption: 'Open a shop: three steps (account, shop, business), then an admin approves it before it can sell.' },
+  { src: sellerAddProduct, label: 'Add product', alt: 'Add product: basic info, images, variants with a SKU table, a publish checklist, shipping and a buyer preview', caption: 'Add product: two variant tiers become 12 SKUs, a checklist covers everything publishing needs, and a preview shows the buyer’s card.' },
+  { src: sellerOrders, label: 'Orders', alt: 'Orders: status cards, a To ship table with product photos, ship-by dates and bulk Arrange shipment', caption: 'Orders: what needs action first, with the deadline that cancels the order shown on every row.' },
+]} />
+
+### Admin platform.
+
+The Admin Portal is split by role: only Finance can change commission and approve payouts, only Customer support can decide disputes, and every change lands in an audit log.
+
+<ScreenTabs screens={[
+  { src: adminModeration, label: 'Product moderation', alt: 'Moderation queue of auto-flagged products with the matching banned keyword', caption: 'Operations: products go live at once; anything matching a banned keyword is flagged here for review.' },
+  { src: adminDispute, label: 'Dispute', alt: 'Dispute with buyer claim and photos, seller response, and an approve or reject decision', caption: 'Customer support: both sides’ evidence on one screen, and a decision with a reason sent to both.' },
+  { src: adminPayout, label: 'Weekly payout', alt: 'Weekly payout batch with sellers, totals, commission and a reconciliation warning', caption: 'Finance: the weekly batch is blocked until reconciliation mismatches are resolved.' },
+]} />
+
+## 4. MVP scope.
+
+One rule decided the scope: the MVP covers what is needed to **complete, pay for and refund real orders**. Anything that only grows traffic or engagement waits.
+
+<Comparison
+  columns={['Area', 'In the MVP', 'Later']}
+  rows={[
+    ['Payment', 'Bank card through one gateway, escrow, refunds to card, weekly payouts', 'Cash on delivery, e-wallets, instalments'],
+    ['Shipping', 'One carrier: rate quote, pickup, label, tracking', 'More carriers, seller self-delivery, same-day'],
+    ['Orders', 'Multi-shop cart, split per shop, cancel, return and refund', 'Pre-orders, buyer-seller chat'],
+    ['Promotion', 'Platform vouchers, shop vouchers, product discounts', 'Flash sales, coins, bundles, affiliates'],
+    ['Engagement', 'Reviews, follow shop, wishlist, notifications', 'Livestream, feed, games, referrals'],
+    ['Platforms', 'Buyer app, Seller Center (web), Admin Portal (web)', 'Buyer web, seller app, multi-language'],
+  ]}
+/>
+
+## 5. Sitemap.
+
+Three sitemaps, one per product. The buyer app is built around the path to an order; Seller Center and the Admin Portal are built around the jobs each team does every day.
+
+<Sitemap maps={[
+  {
+    name: 'End-user app', platform: 'iOS · Android',
+    pages: [
+      { label: 'Splash' },
+      { label: 'Home', children: [{ label: 'Search results' }, { label: 'Category products' }, { label: 'Product detail', children: [{ label: 'Review media' }, { label: 'All reviews' }] }, { label: 'Shop page' }] },
+      { label: 'Categories' },
+      { label: 'Cart', children: [{ label: 'Checkout', children: [{ label: 'Card payment', children: [{ label: '3-D Secure', external: true }] }, { label: 'Order success' }] }] },
+      { label: 'Notifications' },
+      { label: 'Me', children: [{ label: 'My orders', children: [{ label: 'Order detail', children: [{ label: 'Return request' }, { label: 'Write review' }] }] }, { label: 'Address book', children: [{ label: 'Add address' }] }] },
+      { label: 'Log in', children: [{ label: 'Verify code' }, { label: 'Google / Apple sign-in', external: true }] },
+    ],
+  },
+  {
+    name: 'Seller platform', platform: 'Seller Center · web',
+    pages: [
+      { label: 'Log in' },
+      { label: 'Register and open a shop', note: 'account, shop, business' },
+      { label: 'Dashboard' },
+      { label: 'Data', note: 'sales dashboard' },
+      { label: 'Products', children: [{ label: 'Add product' }] },
+      { label: 'Orders' },
+      { label: 'Returns' },
+      { label: 'Promotions', children: [{ label: 'Shop vouchers' }, { label: 'Product discounts' }] },
+      { label: 'Balance and payouts' },
+      { label: 'Shop settings', children: [{ label: 'Shop rating' }, { label: 'Shop information', note: 'basic, business' }, { label: 'Address', note: 'pickup, return' }] },
+    ],
+  },
+  {
+    name: 'Admin platform', platform: 'Admin Portal · web',
+    pages: [
+      { label: 'Dashboard' },
+      { label: 'Data', note: 'all shops' },
+      { label: 'Shops', children: [{ label: 'Shop applications' }] },
+      { label: 'Products', note: 'moderation', children: [{ label: 'Categories' }, { label: 'Banned keywords' }] },
+      { label: 'Orders' },
+      { label: 'Disputes', children: [{ label: 'Dispute detail' }] },
+      { label: 'Payouts' },
+      { label: 'Vouchers' },
+      { label: 'Home banners' },
+      { label: 'Settings', children: [{ label: 'Commission rates' }, { label: 'Admin accounts' }, { label: 'Audit log' }, { label: 'Business settings' }] },
+    ],
+  },
+]} />
+
+## 6. Order flow.
+
+Every order follows one path, and every step answers three questions: **who moves it, where the money is, and what happens if it goes wrong.** A checkout with items from three shops becomes three orders that move on their own.
+
+<Flow
+  steps={[
+    { status: 'Pending payment', who: 'Buyer · gateway', what: 'The buyer checks out a cart from one or more shops and pays by card with 3-D Secure. Only the gateway’s server callback counts as paid, never the app’s return screen.', money: 'Nothing captured', moneyTone: 'none', branch: { when: 'Not paid within 15 minutes', then: 'Cancelled automatically; vouchers go back to the buyer' } },
+    { status: 'To ship', who: 'System', what: 'The checkout splits into one order per shop. Stock is deducted now, at payment, not when an item goes into the cart. Each seller is notified.', money: 'Held in escrow', branch: { when: 'Buyer cancels, or the seller misses the 2-business-day ship deadline', then: 'Cancelled with a full refund; a missed deadline counts against the shop' } },
+    { status: 'Ready for pickup', who: 'Seller', what: 'The seller books the carrier pickup and prints the label.', money: 'Held in escrow', branch: { when: 'The seller can’t fulfil it', then: 'Cancels with a reason; full refund, counted against the shop' } },
+    { status: 'Shipping', who: 'Carrier', what: 'The status follows the carrier’s webhook; if it goes quiet for 24 hours, the system polls tracking. From here on the order can no longer be cancelled.', money: 'Held in escrow', branch: { when: 'The carrier can’t deliver', then: 'Delivery failed: the parcel goes back to the seller and the buyer is refunded' } },
+    { status: 'Delivered', who: 'Carrier', what: 'The buyer has 7 days to confirm receipt or raise a problem.', money: 'Held in escrow', branch: { when: 'Item missing, wrong, damaged or not as described', then: 'Return requested: see the return flow below' } },
+    { status: 'Completed', who: 'Buyer or system', what: 'The buyer taps <strong>Order received</strong>, or 7 days pass with no open return. Commission is charged only now.', money: 'Released to the seller’s balance', moneyTone: 'released' },
+    { status: 'Paid out', who: 'Finance', what: 'Each week Finance reviews the payout batch, holds sellers if needed, and approves the bank transfer.', money: 'Paid to the seller’s bank', moneyTone: 'released', final: true },
+  ]}
+  caption="Every time limit here is a setting the admin team can change, not a hard-coded rule."
+/>
+
+**The decisions behind it:**
+
+- **One order per shop.** Shops ship, cancel and refund separately, so one late seller never blocks the rest of the buyer’s checkout.
+- **Escrow until Completed.** The seller only gets paid once the buyer has the item, or has had 7 days to complain. That single rule is what lets a buyer trust a shop they have never heard of.
+- **No cancelling once it ships.** After pickup, the only path is a return. Two ways to undo the same order would mean two sets of rules, and more disputes.
+
+## 7. Return flow.
+
+Returns are where marketplaces lose trust, so the flow gives every side a deadline and makes silence count.
+
+<Flow
+  branchLabel="Other paths"
+  steps={[
+    { status: 'Requested', who: 'Buyer', what: 'Within 7 days of delivery, with a reason and at least one photo (not needed for “not received”). Two types: <strong>Refund only</strong> or <strong>Return and refund</strong>.', money: 'Held in escrow', branch: { when: 'The reason is a change of mind', then: 'Not accepted in the MVP', tone: 'alt' } },
+    { status: 'Seller responds', who: 'Seller', what: 'The seller has 2 business days to accept or dispute. <strong>No answer counts as accepting.</strong>', money: 'Held in escrow', branch: { when: 'The seller disputes, with a reason', then: 'Customer support reviews both sides and decides; if the claim is rejected, the order completes and the seller is paid' } },
+    { status: 'Accepted', who: 'System', what: 'For <strong>Return and refund</strong>, a return shipment is created with the platform’s carrier.', money: 'Held in escrow', branch: { when: 'The type is Refund only (e.g. not received, missing parts)', then: 'Refunded straight away; the buyer keeps the item', tone: 'alt' } },
+    { status: 'Awaiting the parcel', who: 'Buyer · carrier', what: 'The buyer sends the item back through the integrated carrier. The seller pays return shipping when the seller is at fault.', money: 'Held in escrow' },
+    { status: 'Item returned', who: 'Seller', what: 'The seller confirms the item arrived. If they don’t, the refund goes out automatically 3 days after the carrier delivers it back.', money: 'Held in escrow' },
+    { status: 'Refunded', who: 'System · gateway', what: 'The money goes back to the original card. Partial refunds are allowed when only some items come back.', money: 'Refunded to card', moneyTone: 'refund', final: true },
+  ]}
+  caption="While a return is open, the order’s money stays in escrow and cannot be paid out."
+/>
+
+**The decisions behind it:**
+
+- **Silence is a yes.** A seller who ignores a request cannot stall the buyer; the deadline decides for them.
+- **The platform decides disputes, not the seller.** Customer support sees both sides’ evidence on one screen, and their decision is final.
+- **No change of mind in the MVP.** Every accepted reason is a real problem with the order (not received, wrong, damaged, not as described, missing parts), which keeps the first version of the rules simple enough to run.
+
+## 8. Business model.
+
+Shopay earns a commission on each **completed** order. Cancelled and fully refunded orders pay none, so the platform only makes money when the buyer is happy.
+
+<Comparison
+  columns={['Per order', 'How it is calculated']}
+  rows={[
+    ['Seller base', 'Item total after product discount − shop voucher'],
+    ['Commission', 'Commission rate × seller base (rate per category, frozen at payment)'],
+    ['Seller payout', 'Seller base − commission'],
+    ['Buyer pays', 'Seller base − platform voucher share + shipping fee'],
+    ['Platform revenue', 'Commission − platform voucher share'],
+  ]}
+/>
+
+Platform vouchers are paid for by the platform, never by the seller, and shipping is passed straight through to the carrier. The default commission rate is still an open question; the mock-ups use 5% as a placeholder.
+
+## 9. Success metrics.
+
+The MVP succeeds if real sellers and buyers complete paid orders end to end and the platform keeps its commission. Targets will be set with the business owner.
+
+<Comparison
+  columns={['Metric', 'Definition']}
+  rows={[
+    ['Completed orders per week', 'Orders reaching Completed'],
+    ['GMV', 'Value of completed orders, before platform vouchers'],
+    ['Checkout conversion', 'Paid checkouts ÷ checkouts started'],
+    ['On-time shipping rate', 'Orders handed to the carrier before the ship deadline ÷ paid orders'],
+    ['Return and refund rate', 'Orders with an approved refund ÷ delivered orders'],
+    ['Dispute resolution time', 'Median time from dispute opened to decision'],
+    ['Take rate', 'Commission earned ÷ GMV'],
+  ]}
+/>
+
+## 10. What's next.
+
+The build follows the money, so each phase ends with something testable end to end:
+
+1. **Foundation:** accounts, admin roles and audit log, categories, settings, gateway and carrier sandboxes.
+2. **Sell side:** shops and products in Seller Center, moderation in the Admin Portal.
+3. **Buy side:** browse, search, cart, checkout, card payment, order split.
+4. **Fulfilment and money:** shipping, order statuses, ledger, escrow, commission, payouts, reconciliation.
+5. **After-sales and promotion:** cancellations, returns, disputes, refunds; vouchers; reviews; notifications.
+6. **Pilot**, then **public launch**.
+
+Before that, a short list of open questions has to be answered: the launch market, the payment gateway and carrier, the default commission rate, and who pays return shipping when a claim is rejected.

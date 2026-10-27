@@ -1,0 +1,79 @@
+---
+// Sitemaps for one or more products, one tab each. Every top-level page is a card; its sub-pages nest inside with tree lines.
+// <Sitemap maps={[{ name: 'Buyer app', platform: 'iOS · Android', pages: [{ label: 'Home', children: [{ label: 'Search' }] }] }]} />
+// `external: true` marks a step run by someone else (a bank, a sign-in provider).
+interface Page { label: string; note?: string; external?: boolean; children?: Page[] }
+interface Map { name: string; platform: string; pages: Page[] }
+interface Props { maps: Map[] }
+const { maps } = Astro.props;
+const count = (ps: Page[]): number => ps.reduce((n, p) => n + (p.external ? 0 : 1) + count(p.children ?? []), 0);
+const uid = Math.random().toString(36).slice(2, 8);
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+// Sub-pages as nested lists; built as a string so the tree can go any depth.
+const renderTree = (ps: Page[]): string =>
+  `<ul class="sm-tree">${ps.map((c) => `<li class="sm-node${c.external ? ' is-external' : ''}"><span class="sm-label">${esc(c.label)}</span>${c.note ? ` <span class="sm-note">· ${esc(c.note)}</span>` : ''}${c.children ? renderTree(c.children) : ''}</li>`).join('')}</ul>`;
+---
+<figure class="block-wide" data-sitemap>
+  <div class="mb-4 flex flex-wrap gap-2" role="tablist">
+    {maps.map((m, i) => (
+      <button type="button" role="tab" id={`sm-${uid}-t${i}`} aria-controls={`sm-${uid}-p${i}`} aria-selected={i === 0 ? 'true' : 'false'} data-sitemap-tab={i}
+        class="inline-flex h-9 items-center gap-2 rounded-full border border-hairline px-4 t-small font-semibold transition hover:border-ink aria-selected:border-ink aria-selected:bg-ink aria-selected:text-canvas">
+        {m.name}<span class="t-caption opacity-60">{count(m.pages)}</span>
+      </button>
+    ))}
+  </div>
+
+  {maps.map((m, i) => (
+    <div role="tabpanel" id={`sm-${uid}-p${i}`} aria-labelledby={`sm-${uid}-t${i}`} data-sitemap-panel={i} hidden={i !== 0} class="sm-panel rounded-md border border-hairline bg-canvas-soft p-4 sm:p-6">
+      <div class="mb-5 flex items-center gap-3">
+        <span class="inline-flex h-10 items-center rounded-sm bg-ink px-4 t-link text-canvas">{m.name}</span>
+        <span class="t-small text-muted">{m.platform} · {count(m.pages)} pages</span>
+      </div>
+      <div class="columns-1 gap-3 sm:columns-2 lg:columns-3">
+        {m.pages.map((p, k) => (
+          <section class="sm-card mb-3 break-inside-avoid rounded-sm border border-hairline bg-canvas p-4" style={`--k:${k}`}>
+            <span class="t-small font-semibold">{p.label}</span>
+            {p.note && <span class="t-caption text-muted"> · {p.note}</span>}
+            {p.children && <Fragment set:html={renderTree(p.children)} />}
+          </section>
+        ))}
+      </div>
+    </div>
+  ))}
+  <figcaption class="t-caption mt-3 text-muted">Dashed items are run outside the product (a bank, a sign-in provider). Numbers count pages.</figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-sitemap]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-sitemap-tab]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-sitemap-panel]')];
+    const show = (i: number) => {
+      tabs.forEach((t, k) => t.setAttribute('aria-selected', String(k === i)));
+      panels.forEach((p, k) => {
+        p.hidden = k !== i;
+        if (k === i) { p.classList.remove('is-shown'); void p.offsetWidth; p.classList.add('is-shown'); }
+      });
+    };
+    tabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+    // Play the cards in when the block first scrolls into view.
+    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { panels.find((p) => !p.hidden)?.classList.add('is-shown'); io.disconnect(); } }, { threshold: 0.2 }).observe(root);
+  });
+</script>
+
+<style>
+  :global(.sm-tree) { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  :global(.sm-tree .sm-tree) { margin-top: 6px; margin-left: 6px; padding-left: 12px; border-left: 1px solid var(--hairline); }
+  :global(.sm-node) { position: relative; padding-left: 14px; font-size: 13px; line-height: 1.35; color: var(--ink-soft); }
+  :global(.sm-node)::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 8px; height: 1px; background: var(--hairline); }
+  :global(.sm-node > .sm-label) { display: inline-block; }
+  :global(.sm-node.is-external > .sm-label) { border: 1px dashed var(--text-faint); border-radius: 999px; padding: 0 8px; color: var(--text-muted); }
+  :global(.sm-note) { color: var(--text-muted); font-size: 12px; }
+
+  :global(html.js) .sm-card { opacity: 0; transform: translateY(10px); }
+  :global(html.js) .sm-panel.is-shown .sm-card { animation: sm-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards; animation-delay: calc(var(--k) * 60ms); }
+  @keyframes sm-in { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) .sm-card { opacity: 1; transform: none; }
+    :global(html.js) .sm-panel.is-shown .sm-card { animation: none; }
+  }
+</style>

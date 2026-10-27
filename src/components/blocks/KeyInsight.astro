@@ -1,0 +1,9 @@
+---
+// One finding that changes the story. Use once or twice per post.
+interface Props { label?: string }
+const { label = 'Key insight' } = Astro.props;
+---
+<aside class="block max-w-[720px] rounded-md border border-accent-soft-border border-l-4 border-l-accent bg-accent-block p-8 text-on-accent-block lg:p-10">
+  <p class="t-label text-accent">{label}</p>
+  <div class="t-h3 mt-4 [&>p]:m-0"><slot /></div>
+</aside>

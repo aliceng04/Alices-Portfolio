@@ -1,0 +1,27 @@
+---
+// Options side by side. `chosen` is the index of the row you picked (0-based).
+interface Props { title?: string; columns: string[]; rows: string[][]; chosen?: number; chosenLabel?: string }
+const { title, columns, rows, chosen, chosenLabel = 'Chosen' } = Astro.props;
+---
+<div class="block max-w-[720px]">
+  {title && <p class="t-title mb-3">{title}</p>}
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[520px] border-separate border-spacing-y-1 text-left">
+      <thead>
+        <tr>{columns.map((c) => <th class="px-4 py-2 t-label text-muted">{c}</th>)}</tr>
+      </thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr class:list={[i === chosen && 'bg-canvas-soft']}>
+            {r.map((cell, ci) => (
+              <td class:list={['px-4 py-4 align-top', ci === 0 ? 't-link w-48' : 't-small text-ink-soft', i === chosen && ci === 0 && 'rounded-l-sm', i === chosen && ci === r.length - 1 && 'rounded-r-sm']}>
+                <span set:html={cell} />
+                {ci === 0 && i === chosen && <span class="mt-2 flex"><span class="inline-flex h-7 items-center rounded-full bg-canvas px-3 t-label">{chosenLabel}</span></span>}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,251 @@
+---
+title: "Aura: turning ambition into a daily system."
+summary: "An AI-planned self-improvement app. From problem statement and persona to prioritised pain points, solutions, a user story and the metrics that define success."
+type: case-study
+date: 2026-10-24
+role: "Business Analyst / Product Owner (solo)"
+timeline: "Jul – Oct 2026"
+skills: [Product discovery, Prioritisation, Metrics]
+tags: [AI, Mobile app]
+tldr: "Ambitious people don't lack motivation; they lack a system that turns a goal into today's action. I ranked their three biggest pains, matched each to one solution, prioritised those by what the whole product depends on, and defined success as one North Star with inputs and guardrails."
+cover: ./cover-phones.png
+coverAlt: "Three Aura screens: a task in progress, the daily dashboard, and the journey journal."
+featured: true
+---
+
+import aiPlan from './screen-ai-plan.png';
+import moment from './screen-moment.png';
+import swap from './screen-swap.png';
+import dashboard from './screen-dashboard.png';
+import task from './screen-task.png';
+import congrats from './screen-congrats.png';
+import journal from './screen-journal.png';
+import stats from './screen-stats.png';
+import premium from './screen-premium.png';
+
+## 1. The goal of this case study.
+
+Show how I took a broad idea, "an app that helps ambitious people become their best selves", and turned it into a focused MVP: a clear problem, a specific user, the pains worth solving first, the solutions that solve them, and a definition of success the team can measure from day one.
+
+## 2. Problem statement.
+
+<KeyInsight label="Problem statement">
+Ambitious 16–36 year-olds want to act on their goals, but their ambition rarely turns into consistent daily action: goals stay abstract, progress is invisible, and one bad day undoes the streak. So most of them give up, and go to bed with the same guilt.
+</KeyInsight>
+
+**What people told me.** When I talked to people about their goals, the same answer kept coming up. They wanted to start; what stopped them was not knowing where to begin, or how:
+
+<Quote who="What I kept hearing" role="Early conversations about personal goals, paraphrased" avatar={false}>
+"I want to start. I just don't know where to begin, or how."
+</Quote>
+
+Nobody was short of ambition. What they were missing was a roadmap: a clear path from the goal they had in mind to the first thing to do today.
+
+**How big the problem is.** Research and the market point the same way: people start strong, the drop-off is steep, and they are already paying for tools that try to help.
+
+<Metrics items={[
+  { value: '19%', label: 'of people still felt successful with their resolution after two years, down from 77% after one week' },
+  { value: '$11.96B', label: 'productivity apps market in 2025, forecast to reach $18.09B by 2030' },
+  { value: '$1.94B', label: 'habit-tracking apps in 2025, forecast to grow about 14% a year to $6.41B by 2034' },
+]} />
+
+Sources: a University of Scranton study that followed 200 people over two years ([via Cornell's Evidence-Based Living](https://evidencebasedliving.human.cornell.edu/2018/01/03/how-to-keep-your-new-years-resolutions)); market estimates from [Mordor Intelligence](https://www.mordorintelligence.com/industry-reports/productivity-apps-market) and [Straits Research](https://straitsresearch.com/report/habit-tracking-apps-market). Market-size figures vary between research firms and are directional, not precise.
+
+**How might we** turn a vague ambition into something a person actually does today, and make the progress feel real enough to keep going?
+
+## 3. Customer persona.
+
+<Persona
+  name="Maya"
+  meta="24 · early-career professional · 3 personal goals"
+  quote="I want to start. I just don't know where to begin, or how."
+  goals={['Run a half marathon in under 2 hours', 'Write the novel she keeps talking about', 'Get conversational in Spanish']}
+  frustrations={['Goals feel huge, so she never knows where to start', "Can't tell if she's making progress, so motivation fades", 'One tired day breaks the streak and the whole plan collapses']}
+  habits={['Uses a to-do app, a habit tracker and notes, none of them connected', 'Plans on Sunday, gives up by Wednesday', 'Opens her to-do list, picks up her phone instead']}
+  proto
+  badge="Based on early conversations · to validate"
+/>
+
+Maya combines what people told me with the target user in the product brief (ambitious, 16–36, self-directed, no coach). Her quote is the one I heard most; her goals and habits are illustrative, and the persona still needs structured interviews to confirm.
+
+## 4. Pain points, prioritised.
+
+I ranked the pains by two questions: **how often does it hit** (daily, weekly, occasionally) and **does it make people quit**. A pain that hits every day and ends the attempt comes first.
+
+<Comparison
+  columns={['Priority', 'Pain point', 'Why it ranks here']}
+  rows={[
+    ['1 · Critical', '"I don\'t know what to do today." Goals stay abstract, with no plan that breaks them into steps.', 'The most common thing people told me. It hits every day and blocks the very first action: nothing else matters if people never start.'],
+    ['2 · High', '"I can\'t see I\'m getting anywhere." Progress is invisible, so motivation fades.', 'Hits every week. It is why people who did start slowly drift away.'],
+    ['3 · Medium', '"One bad day and I give up." A low-energy day breaks the streak, and with it the plan.', 'Occasional, but it ends streaks that were working. It matters most once the first two are solved.'],
+  ]}
+/>
+
+## 5. Solutions, prioritised.
+
+One solution per pain, ranked by what the rest of the product depends on. There is no progress to show (2) without a plan (1), and no streak to protect (3) without both.
+
+<Decision
+  eyebrow="Priority 1 · Must have"
+  title="An AI that turns the goal into a plan, and the plan into today's tasks."
+  image={aiPlan} alt="AI plan chat with phases and quick chips"
+  labels={['Solves', 'Solution', 'Why first']}
+  problem="Pain 1: people want to start but don't know where to begin, or how."
+  decision="Aura works as <strong>a roadmap</strong>. The user names the goal, why it matters and what done looks like; the AI proposes phases and weekly tasks; quick chips like <strong>&quot;Shorter&quot;</strong> or <strong>&quot;4 days/week&quot;</strong> adjust it without writing a prompt. The accepted plan becomes a dated list of daily tasks."
+  why="It is the foundation: every other feature reads from the plan. Without it, Aura is just another to-do list."
+/>
+
+<Decision
+  eyebrow="Priority 2 · Must have"
+  title="Finishing a task means capturing the moment."
+  image={moment} alt="Capture moment: a photo of running shoes on stairs, tagged Tempo run · 8km, with a caption field"
+  labels={['Solves', 'Solution', 'Why second']}
+  problem="Pain 2: progress is invisible."
+  decision="Marking a task done opens the camera. Each photo, with a short caption, is saved to the goal's journey as <strong>a small personal achievement</strong>, and the journal lets you scroll back through all of them."
+  why="It is the differentiator: no to-do app or habit tracker leaves an emotional record. It only has meaning once there are tasks to complete, so it comes after the plan."
+/>
+
+**Why a photo, not a checkbox.** A ticked box disappears the moment you tick it, and a list of finished tasks says nothing about who you became along the way. I wanted every finished task to feel like an achievement in its own right, and to leave something behind. Months later, scrolling back through the journey is when you actually feel how far you have come, and that feeling is what keeps people going on the days motivation runs out.
+
+<Decision
+  eyebrow="Priority 3 · Should have"
+  title="A lighter task on low-energy days, so the streak survives."
+  image={swap} alt="Low energy today? sheet offering an easy 2k shakeout jog that still counts toward the streak"
+  labels={['Solves', 'Solution', 'Why third']}
+  problem="Pain 3: one bad day ends the attempt."
+  decision="Every task offers <strong>&quot;Low energy? Swap to keep your streak&quot;</strong>: a lighter version replaces today's task and still counts toward the streak."
+  why="It protects retention once people are already using the loop, and it is cheap to build. Important, but the MVP can launch without it."
+/>
+
+**How the three fit together in one day.** The plan fills today's list, the task screen keeps the *why* in view, finishing it is celebrated, and every finished task adds to the journey.
+
+<Gallery
+  images={[
+    { src: dashboard, alt: 'Daily dashboard with the milestone card and today’s plan', caption: '1 · Today: the plan, broken into today’s tasks, with the milestone always on top.' },
+    { src: task, alt: 'Task in progress with why this matters, checklist and parent goal', caption: '2 · Doing it: the why stays visible, and the low-energy swap is one tap away.' },
+    { src: congrats, alt: 'Task completed: Well done, Maya, with a 13-day streak', caption: '3 · Done: after the photo, a small celebration and a longer streak.' },
+    { src: journal, alt: 'Your journey: goals, weekly sessions, goal progress and heatmap', caption: '4 · The journey: progress made visible, goal by goal.' },
+  ]}
+  caption="A day with Aura, from today’s plan to the journey. Click any screen to enlarge."
+/>
+
+Deliberately **not** in the MVP: social feeds, coaches or teams, a template marketplace, calendar integrations. Each is reasonable; none helps one person finish one goal.
+
+## 6. Example user story & acceptance criteria.
+
+From the spec for the task screen, written for priority 3:
+
+<UserStory
+  id="US-2"
+  priority="P1 · Should"
+  title="Swap to an easier version on a low-energy day"
+  as="a person who doesn't have it in me today"
+  want="to do a lighter version instead"
+  soThat="I keep the streak without forcing the full session"
+  criteria={[
+    { id: 'AC-2.1', given: 'the "low energy today?" option is shown', when: 'I tap "Do the easier one instead"', then: "today's session is replaced with the lighter alternative (not added alongside it), and the swap is tracked as an analytics event." },
+    { id: 'AC-2.2', given: 'I swapped to the easier task', when: 'I complete it', then: 'it counts toward my streak exactly as the original task would have.' },
+  ]}
+  source="One of 63 user stories in the Aura spec, each with acceptance criteria and test cases."
+/>
+
+## 7. Business model.
+
+The model follows the same rule as the MVP: the core loop must feel complete for free, because a crippled core loop kills activation and word of mouth. Premium sells *more*, never *the basics*.
+
+<Canvas cells={[
+  { title: 'Customer segments', points: ['<strong>Gen Z & young professionals (16–30)</strong> who want to build skills and discipline', '<strong>Overwhelmed achievers</strong>: many goals, no structure', '<strong>Creators & freelancers</strong> managing their own time'] },
+  { title: 'Value proposition', highlight: true, points: ['<strong>A roadmap, automatically:</strong> a vague ambition becomes a concrete task checklist', '<strong>Avoid burnout:</strong> lighter tasks on low-energy days', '<strong>Lasting motivation:</strong> a photo journal of the journey'] },
+  { title: 'Channels', points: ['App Store & Google Play', 'TikTok, Instagram Reels, Threads', 'Word of mouth through referral links'] },
+  { title: 'Customer relationships', points: ['Private, automated AI coaching', 'Personalised, well-timed reminders', 'A community of "AURA Achievers" sharing their journeys'] },
+  { title: 'Key partners', points: ['LLM providers (OpenAI, Anthropic)', 'Cloud (AWS / Google Cloud)', 'Apple & Google billing; MoMo and VNPay', 'Productivity creators and book influencers'] },
+  { title: 'Cost structure', points: ['Cloud infrastructure and AI API usage', 'Product, design and engineering', 'Marketing: paid ads, creator commissions, affiliates'] },
+]} />
+
+<Comparison
+  title="Revenue: three ways to pay for Premium at launch, two more streams once the loop is proven."
+  columns={['When', 'Revenue stream', 'Why then']}
+  rows={[
+    ['MVP', '<strong>Monthly subscription</strong> to Premium, with a 7-day free trial', 'The easiest yes: low commitment while people test the value'],
+    ['MVP', '<strong>Yearly subscription</strong> at a discount', 'Cash up front and much lower churn from committed users'],
+    ['MVP', '<strong>Lifetime pass</strong>: pay once, Premium for good', 'For people who already know they will stay, and who dislike subscriptions'],
+    ['Later', '<strong>Paid challenges</strong>: join a guided challenge with others working toward the same goal', 'Needs an active community first, or there is no one to take part with'],
+    ['Later', '<strong>Templates</strong>: goal-achievement plans (e.g. a half-marathon or a language plan) and vision boards', 'Needs a library of plans proven to work; deliberately left out of the MVP'],
+  ]}
+/>
+
+<Comparison
+  title="Where the free / Premium line sits."
+  columns={['', 'Free', 'Premium']}
+  rows={[
+    ['Active goals', 'Up to 3 at a time', 'Unlimited'],
+    ['AI plan', 'Generate and accept a plan; limited refinements', 'Unlimited refinements'],
+    ['AI coaching after the plan', '—', 'Check-ins, advice, re-planning when behind'],
+    ['Daily tasks, focus timer, moments, journal', 'Full', 'Full'],
+    ['Statistics', 'Current streak and completion', 'Trends, breakdowns by goal, recommendations'],
+  ]}
+/>
+
+<Gallery
+  images={[
+    { src: premium, alt: 'Account screen with the Premium card at $4.99 a month', caption: 'Account: the Premium offer, $4.99 a month, cancel anytime.' },
+    { src: stats, alt: 'Statistics: best streak, sessions, completion, last 8 weeks and by goal', caption: 'Deeper statistics, one of the Premium features: trends over 8 weeks and progress by goal.' },
+  ]}
+  caption="Premium sells more coaching and insight, never the core loop."
+/>
+
+The working price is **$4.99 a month or $39.99 a year**, with a 7-day trial: the low end of the self-improvement app range, because the audience is young and price-sensitive. It is a starting point to price-test, not a commitment, and I modelled it in a pricing and P&L sheet before putting it in the spec.
+
+**Go-to-market, in three steps** (a plan, not results yet):
+
+- **Pre-launch:** short-form videos on the theme *"failing at discipline"*, and a waitlist landing page that gives away Notion templates.
+- **Launch:** co-create with micro-influencers in studygram, productivity and book communities; optimise the App Store listing.
+- **Growth loop:** a **21-day challenge** that turns your moments into a shareable story card, so the photo ritual doubles as marketing; invite two friends to the challenge and get a month of Premium free.
+
+## 8. Success metrics.
+
+<Comparison
+  columns={['Metric', 'What it tells us', 'Linked to']}
+  rows={[
+    ['North Star: weekly active users who complete at least one planned task with a captured moment', 'The whole loop is working, not just app opens', 'All three'],
+    ['New install → accepted plan', 'People get past setup and have a plan to follow', 'Pain 1 · Solution 1'],
+    ['Day-7 retention (opened and completed a task)', 'The first week, where habits form or fail', 'Pain 1 · Solution 1'],
+    ['Share of completed tasks with a captured moment', 'Whether the ritual is loved or merely tolerated', 'Pain 2 · Solution 2'],
+    ['7- and 30-day task adherence', 'Whether streaks survive the bad days', 'Pain 3 · Solution 3'],
+    ['Guardrail: goals with no activity for 14 days', 'Pushing activation must not create abandoned goals', 'Health'],
+    ['Guardrail: uninstalls after a reminder', 'Reminders must not turn into nagging', 'Health'],
+  ]}
+/>
+
+Each metric has its events defined in the analytics plan, so it can be measured from launch rather than bolted on later.
+
+**The same metrics across the growth funnel (AARRR).** The North Star tells us the loop works; the funnel tells us *where* people drop out of it.
+
+<Funnel stages={[
+  { name: 'Acquisition', question: 'Do people find Aura?', metrics: ['App downloads', 'New sign-ups by channel'] },
+  { name: 'Activation', question: 'Do they reach the first value?', metrics: ['Onboarding completion', 'Time to first goal', 'Install → accepted plan'] },
+  { name: 'Retention', question: 'Do they keep showing up?', metrics: ['Day-7 retention', 'Daily task completion', 'New goals after the first'] },
+  { name: 'Referral', question: 'Do they bring friends?', metrics: ['Challenge invites sent', 'Invites that become sign-ups'] },
+  { name: 'Revenue', question: 'Do they pay?', metrics: ['Free → Premium conversion', 'Trial → paid', 'Revenue per user (ARPU)'] },
+]} />
+
+## 9. What's next & what I learned.
+
+**What's next.** The roadmap runs in three phases, each unlocked by proof from the one before:
+
+<Comparison
+  columns={['Phase', 'Focus', 'What it adds']}
+  rows={[
+    ['1 · MVP & acquire', 'Prove the loop works', 'The core app, onboarding to a first goal, reminders, and a way to collect feedback from the first users'],
+    ['2 · Growth & retention', 'Keep people coming back', 'Ongoing AI coaching, custom themes, the referral programme, and the first paid challenges and templates'],
+    ['3 · Personalisation', 'Make it feel made for you', 'Plans that adapt to your energy each day, and a loyalty programme for long-term users'],
+  ]}
+/>
+
+Before phase 2, the three bets underneath the MVP have to hold: AI plans are good enough to follow, the photo ritual feels like a reward rather than a chore, and people will pay for Premium. The first step is structured interviews with people like Maya, followed by a prototype test of the core loop.
+
+**What I learned.**
+
+- **Product sense is mostly subtraction.** The most useful decisions were about what the MVP is *not*: no social feed, no coaches, no marketplace. One loop, done well, beats ten features done halfway.
+- **Start from what people say, not from the screens.** The project began with a design export; the clearest direction came later, from people telling me they wanted to start but didn't know how.
+- **Be honest about what is still a bet.** Writing down the assumptions, with how I would test each one, made the plan more credible, not less.

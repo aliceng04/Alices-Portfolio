@@ -1,0 +1,76 @@
+---
+# Copy this file to src/content/work/<ten-bai>/index.mdx and fill it in.
+# Delete any block you don't need. Lines starting with # are notes, they are ignored.
+title: "Title as a sentence, with a period."
+summary: "One or two sentences. Shown on the card and under the title."
+type: case-study        # case-study | analysis | prototype | writing | side-project
+date: 2026-10-01        # used for ordering, newest first
+role: "Product manager"
+timeline: "6 weeks · 2026"
+skills: [Research, Metrics]
+tags: [Fintech, Mobile app]
+tldr: "The 10-second version: the problem, what you did, the result."
+# cover: ./cover.png    # optional; without it the post gets the text card
+# coverAlt: "Describe the image"
+featured: false         # true = shown on the home page first
+draft: true             # true = not published (but still visible in the public repo)
+---
+
+{/* Images used below must be imported here, next to this file: */}
+{/* import shot1 from './screen-1.png'; */}
+{/* import flow from './flow-light.svg'; */}
+{/* import flowDark from './flow-dark.svg'; */}
+
+## Context.
+
+Plain text is just written like this. **Bold**, *italic*, [a link](https://example.com).
+
+- A list item
+- Another one
+
+<KeyInsight>
+The one finding that changes the story.
+</KeyInsight>
+
+<Quote who="Participant 4" role="Student, 21">
+"Something a real user said."
+</Quote>
+
+<Metrics items={[
+  { value: '7 / 10', label: 'what this number means' },
+  { value: '82%', label: 'what this number means' },
+]} />
+
+<Slides>
+  <Slide title="First idea, as a sentence.">One or two lines of support.</Slide>
+  <Slide title="Second idea.">One or two lines of support.</Slide>
+</Slides>
+
+{/* Diagram from Figma/Reqwise: export light + dark SVG next to this file. */}
+{/* <Diagram type="Activity diagram" title="What it shows." src={flow} srcDark={flowDark} /> */}
+
+{/* Diagram written as data, follows the site colours: */}
+<Diagram type="Swimlane diagram" title="Who does what.">
+  <Swimlane lanes={['User', 'App']} steps={[['User', 'Does a thing'], ['App', 'Responds']]} />
+</Diagram>
+
+<Comparison
+  title="Options we weighed."
+  columns={['Option', 'Upside', 'Cost']}
+  rows={[
+    ['Option A', 'Why it is good', 'What it costs'],
+    ['Option B', 'Why it is good', 'What it costs'],
+  ]}
+  chosen={1}
+/>
+
+{/* <Gallery images={[{ src: shot1, alt: 'Home screen', caption: 'What to notice' }]} /> */}
+
+{/* Prototype in code: put the folder in public/prototypes/<name>/ */}
+{/* <Prototype title="Try it." description="What to try." src="/prototypes/<name>/" /> */}
+{/* Prototype in Figma: */}
+{/* <Prototype title="Try it." figma="https://www.figma.com/proto/..." /> */}
+
+## Outcome & learnings.
+
+What happened, and what you'd do next.

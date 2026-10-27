@@ -1,0 +1,15 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+// Text slide by default; pass `image` to put a picture beside the text.
+interface Props { title: string; image?: ImageMetadata; alt?: string }
+const { title, image, alt = '' } = Astro.props;
+---
+<section data-slide class="flex min-h-[420px] flex-col justify-center gap-6 rounded-md border border-accent-soft-border bg-accent-soft p-8 lg:min-h-[560px] lg:flex-row lg:items-center lg:gap-16 lg:p-16">
+  <div class="flex flex-1 flex-col gap-4 lg:gap-6">
+    <span class:list={[image ? "t-h1" : "t-display", "text-muted"]} data-slide-number></span>
+    <h3 class:list={[image ? "t-h3" : "t-h2", "max-w-[760px]"]}>{title}</h3>
+    <div class="t-lead max-w-[640px] text-muted [&>p]:m-0"><slot /></div>
+  </div>
+  {image && <Image src={image} alt={alt} widths={[480, 960]} sizes="(min-width: 1024px) 260px, 70vw" class="mx-auto w-[220px] shrink-0 lg:w-[260px]" />}
+</section>

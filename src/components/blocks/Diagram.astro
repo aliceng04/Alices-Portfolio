@@ -1,0 +1,39 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Icon from '../Icon.astro';
+
+// Either an exported image (from Figma/Reqwise; pass srcDark for the dark theme)
+// or children, e.g. <Swimlane …/>.
+interface Props {
+  title: string;
+  type?: string;
+  caption?: string;
+  src?: ImageMetadata;
+  srcDark?: ImageMetadata;
+  alt?: string;
+}
+const { title, type = 'Diagram', caption, src, srcDark, alt = title } = Astro.props;
+---
+<figure class="block-wide rounded-md border border-hairline bg-canvas p-4 lg:p-8">
+  <div class="mb-6 flex items-center gap-4">
+    <div class="flex flex-1 flex-col gap-1">
+      <span class="t-caption text-muted">{type}</span>
+      <span class="t-title">{title}</span>
+    </div>
+    {src && (
+      <a href={src.src} target="_blank" rel="noopener" class="hidden h-10 items-center gap-2 rounded-full bg-canvas-soft px-4 t-link hover:bg-hairline sm:inline-flex">
+        <Icon name="maximize" size={16} />View fullscreen
+      </a>
+    )}
+  </div>
+  {src ? (
+    <a href={src.src} target="_blank" rel="noopener" class="block overflow-x-auto rounded-sm bg-canvas-soft p-4">
+      <Image src={src} alt={alt} class:list={['mx-auto h-auto max-w-full', srcDark && 'dark:hidden']} />
+      {srcDark && <Image src={srcDark} alt={alt} class="mx-auto hidden h-auto max-w-full dark:block" />}
+    </a>
+  ) : (
+    <slot />
+  )}
+  {caption && <figcaption class="t-caption mt-4 text-muted">{caption}</figcaption>}
+</figure>

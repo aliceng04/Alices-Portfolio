@@ -1,0 +1,17 @@
+---
+// A real voice from research. <Quote who="Participant 4" role="Student, 21">…</Quote>
+// `avatar={false}` hides the initials circle (e.g. when the quote is a summary of many people).
+interface Props { who: string; role?: string; avatar?: boolean }
+const { who, role, avatar = true } = Astro.props;
+const initials = who.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+---
+<figure class="block max-w-[720px] border-l-4 border-ink py-2 pl-6 lg:pl-8">
+  <blockquote class="t-h4 [&>p]:m-0"><slot /></blockquote>
+  <figcaption class="mt-6 flex items-center gap-3">
+    {avatar && <span class="inline-flex size-10 items-center justify-center rounded-full bg-canvas-soft t-label">{initials}</span>}
+    <span class="flex flex-col">
+      <span class="t-link">{who}</span>
+      {role && <span class="t-caption text-muted">{role}</span>}
+    </span>
+  </figcaption>
+</figure>

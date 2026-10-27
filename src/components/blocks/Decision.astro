@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// One product decision shown on the screen it shaped: the problem, the call, and why.
+// <Decision title="…" image={shot} problem="…" decision="…" why="…" />
+// `labels` renames the three rows (e.g. Solves / Solution / Why this rank); `eyebrow` adds a small label above the title.
+interface Props { title: string; image: ImageMetadata; alt?: string; problem: string; decision: string; why: string; labels?: [string, string, string]; eyebrow?: string }
+const { title, image, alt = title, problem, decision, why, labels = ['Problem', 'Decision', 'Why'], eyebrow } = Astro.props;
+const rows = [[labels[0], problem], [labels[1], decision], [labels[2], why]];
+---
+<figure class="block-wide rounded-md border border-hairline bg-canvas p-5 sm:p-8">
+  <div class="grid items-center gap-8 sm:grid-cols-[200px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)] lg:gap-12">
+    <Image src={image} alt={alt} widths={[260, 520]} sizes="230px" class="mx-auto w-[200px] lg:w-[230px]" />
+    <figcaption class="flex flex-col gap-5">
+      {eyebrow && <span class="t-label text-accent">{eyebrow}</span>}
+      <h3 class="t-title">{title}</h3>
+      <dl class="flex flex-col gap-4">
+        {rows.map(([k, v]) => (
+          <div class="grid gap-1 sm:grid-cols-[88px_minmax(0,1fr)] sm:gap-4">
+            <dt class:list={['t-label pt-0.5', k === labels[1] ? 'text-accent' : 'text-muted']}>{k}</dt>
+            <dd class="t-body text-ink-soft" set:html={v} />
+          </div>
+        ))}
+      </dl>
+    </figcaption>
+  </div>
+</figure>

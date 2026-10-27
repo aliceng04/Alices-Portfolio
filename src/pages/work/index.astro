@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getWork } from '../../lib/work';
+import { profile } from '../../data/profile';
+import { WORK_TYPES, type WorkType } from '../../lib/types';
+
+const work = await getWork();
+// Only types that have posts; no filter at all while there is a single type.
+const types = (Object.keys(WORK_TYPES) as WorkType[]).filter((t) => work.some((w) => w.data.type === t));
+---
+<Layout title="Work" description="Case studies, analyses and prototypes.">
+  <section class="mx-auto max-w-[1120px] px-4 pb-8 pt-12 lg:px-0 lg:pb-16 lg:pt-20">
+    <h1 class="t-h1">Work.</h1>
+    <p class="t-lead mt-4 max-w-[720px] text-muted lg:mt-6">Case studies, analyses and prototypes from problems I've worked on.</p>
+  </section>
+
+  <section class="mx-auto max-w-[1120px] px-4 lg:px-0">
+    {types.length > 1 && (
+      <div class="-mx-4 mb-8 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+        <div class="inline-flex rounded-full bg-canvas-soft p-1" role="group" aria-label="Filter by type">
+          {['all', ...types].map((t, i) => (
+            <button type="button" data-filter={t} aria-pressed={i === 0 ? 'true' : 'false'}
+              class="h-10 whitespace-nowrap rounded-full px-4 t-link text-muted transition aria-pressed:bg-canvas aria-pressed:text-ink">
+              {t === 'all' ? 'All' : WORK_TYPES[t as WorkType]}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {work.length > 0 ? (
+      <div class="grid items-start gap-6 lg:grid-cols-2 lg:gap-16" data-work-grid>
+        {work.map((entry) => <WorkCard entry={entry} />)}
+      </div>
+    ) : (
+      <div class="flex flex-col items-center gap-4 rounded-md border border-accent-soft-border bg-accent-soft px-6 py-20 text-center">
+        <p class="t-h3">Work is on the way.</p>
+        <p class="t-body text-muted">I'm writing up my first projects. Want to talk product in the meantime?</p>
+        <a href={profile.linkedin} target="_blank" rel="noopener" class="mt-2 inline-flex h-12 items-center rounded-full bg-primary px-6 t-link text-on-primary">Get in touch</a>
+      </div>
+    )}
+  </section>
+</Layout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-work-grid] > [data-type]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((c) => (c.hidden = f !== 'all' && c.dataset.type !== f));
+    }),
+  );
+</script>

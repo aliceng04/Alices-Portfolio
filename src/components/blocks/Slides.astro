@@ -1,0 +1,58 @@
+---
+import Icon from '../Icon.astro';
+// <Slides><Slide title="…">…</Slide> …</Slides> — one idea per slide.
+const round = 'inline-flex size-12 items-center justify-center rounded-full border border-hairline bg-canvas transition hover:bg-canvas-soft disabled:opacity-40';
+---
+<div class="block-wide" data-slides>
+  <div class="relative" data-slides-track><slot /></div>
+  <div class="mt-4 flex items-center gap-4">
+    <span class="t-link tabular-nums" data-slides-counter aria-live="polite"></span>
+    <div class="flex flex-1 items-center gap-2" data-slides-dots></div>
+    <button type="button" class={round} data-slides-prev aria-label="Previous slide"><Icon name="chevron-left" /></button>
+    <button type="button" class={round} data-slides-next aria-label="Next slide"><Icon name="chevron-right" /></button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slides]').forEach((root) => {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-slide]')];
+    const counter = root.querySelector('[data-slides-counter]')!;
+    const dots = root.querySelector('[data-slides-dots]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-slides-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-slides-next]')!;
+    let i = 0;
+    slides.forEach((s, n) => {
+      const num = s.querySelector('[data-slide-number]');
+      if (num) num.textContent = String(n + 1).padStart(2, '0');
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.setAttribute('aria-label', `Go to slide ${n + 1}`);
+      d.className = 'h-2 w-2 rounded-full bg-hairline transition-all aria-current:w-6 aria-current:bg-ink';
+      d.addEventListener('click', () => show(n));
+      dots.appendChild(d);
+    });
+    const show = (n: number) => {
+      i = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach((s, k) => (s.hidden = k !== i));
+      [...dots.children].forEach((d, k) => (k === i ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+      counter.textContent = `${i + 1} / ${slides.length}`;
+      prev.disabled = i === 0;
+      next.disabled = i === slides.length - 1;
+    };
+    prev.addEventListener('click', () => show(i - 1));
+    next.addEventListener('click', () => show(i + 1));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(i - 1);
+      if (e.key === 'ArrowRight') show(i + 1);
+    });
+    let x0: number | null = null;
+    root.addEventListener('touchstart', (e) => (x0 = e.touches[0].clientX), { passive: true });
+    root.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) show(i + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+    show(0);
+  });
+</script>

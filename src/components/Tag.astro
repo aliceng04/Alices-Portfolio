@@ -1,0 +1,8 @@
+---
+import { tagTone, type Tone } from '../lib/tags';
+// Coloured pill. Pass `tone` for a fixed colour, otherwise it is derived from `name`.
+// `solid` (used for the post type) fills the pill so it reads apart from topic tags.
+interface Props { name: string; tone?: Tone; solid?: boolean }
+const { name, tone = tagTone(name), solid = false } = Astro.props;
+---
+<span class={`tag tag-${tone} ${solid ? 'tag-solid' : ''} inline-flex h-7 items-center rounded-full px-3 t-label`}>{name}</span>

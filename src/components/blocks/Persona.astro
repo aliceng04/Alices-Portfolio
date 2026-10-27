@@ -1,0 +1,40 @@
+---
+// Persona card. Mark `proto` when it is assumption-based rather than built from research.
+interface Props {
+  name: string;
+  meta: string;
+  quote: string;
+  goals: string[];
+  frustrations: string[];
+  habits?: string[];
+  proto?: boolean;
+  badge?: string;
+}
+const { name, meta, quote, goals, frustrations, habits = [], proto = false, badge = 'Proto-persona · to validate' } = Astro.props;
+const cols = [
+  ['Goals', goals],
+  ['Frustrations', frustrations],
+  ...(habits.length ? [['Today she…', habits] as const] : []),
+] as const;
+---
+<figure class="block-wide rounded-md border border-hairline bg-canvas p-6 sm:p-8">
+  <div class="flex flex-wrap items-center gap-4">
+    <span class="inline-flex size-14 items-center justify-center rounded-full bg-primary text-[20px] font-[652] text-on-primary">{name[0]}</span>
+    <div class="flex flex-1 flex-col">
+      <span class="t-h4">{name}</span>
+      <span class="t-small text-muted">{meta}</span>
+    </div>
+    {proto && <span class="inline-flex h-7 items-center rounded-full bg-canvas-soft px-3 t-label text-muted">{badge}</span>}
+  </div>
+  <blockquote class="mt-6 border-l-4 border-accent pl-5 t-h4 italic">“{quote}”</blockquote>
+  <div class:list={['mt-8 grid gap-6', cols.length === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2']}>
+    {cols.map(([label, items]) => (
+      <div class="flex flex-col gap-3">
+        <span class="t-label text-accent">{label}</span>
+        <ul class="flex flex-col gap-2">
+          {items.map((i) => <li class="flex gap-2 t-small text-ink-soft"><span class="mt-[7px] size-1.5 shrink-0 rounded-full bg-hairline"></span>{i}</li>)}
+        </ul>
+      </div>
+    ))}
+  </div>
+</figure>

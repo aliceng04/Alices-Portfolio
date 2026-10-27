@@ -1,0 +1,13 @@
+---
+import { profile } from '../data/profile';
+---
+<footer id="contact" class="mt-20 rounded-t-md bg-footer text-on-footer lg:mt-30">
+  <div class="mx-auto flex max-w-[1120px] flex-col gap-12 px-6 pb-8 pt-12 lg:px-0 lg:pb-12 lg:pt-20">
+    <p class="t-h1">{profile.footerLine}</p>
+    <ul class="flex flex-col gap-4 sm:flex-row sm:gap-8">
+      <li><a class="t-link hover:text-footer-muted transition" href={`mailto:${profile.email}`}>Email</a></li>
+      <li><a class="t-link hover:text-footer-muted transition" href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+    <p class="t-caption text-footer-muted">© {new Date().getFullYear()} {profile.name}</p>
+  </div>
+</footer>

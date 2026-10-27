@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+// Scrollytelling: the phone stays put while the steps scroll past; the screen follows the step.
+// <Story steps={[{ image: shot, alt: '…', title: '…', text: '…' }]} />
+interface Props { steps: { image: ImageMetadata; alt: string; title: string; text: string }[] }
+const { steps } = Astro.props;
+---
+<section class="block-wide" data-story>
+  <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <ol>
+      {steps.map((s, i) => (
+        <li data-story-step={i} class="flex flex-col justify-center gap-3 py-10 transition-opacity duration-500 lg:min-h-[75vh] lg:py-0">
+          <span class="t-label text-accent">Step {String(i + 1).padStart(2, '0')}</span>
+          <h3 class="t-h3">{s.title}</h3>
+          <p class="t-body text-muted">{s.text}</p>
+          <Image src={s.image} alt={s.alt} widths={[320, 640]} sizes="280px" class="mt-4 w-[260px] lg:hidden" />
+        </li>
+      ))}
+    </ol>
+    <div class="hidden lg:block">
+      <div class="sticky top-28">
+        <div class="relative w-[320px]">
+          {steps.map((s, i) => (
+            <Image src={s.image} alt={s.alt} widths={[320, 640]} sizes="320px" data-story-image={i}
+              class:list={['w-full transition-all duration-700 ease-out', i === 0 ? 'relative' : 'absolute inset-0 opacity-0 translate-y-4']} />
+          ))}
+        </div>
+        <div class="mt-5 flex justify-center gap-2">
+          {steps.map((_, i) => <span data-story-dot={i} class:list={['h-2 rounded-full transition-all', i === 0 ? 'w-6 bg-ink' : 'w-2 bg-hairline']} />)}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-story]').forEach((root) => {
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-story-step]')];
+    const images = [...root.querySelectorAll<HTMLElement>('[data-story-image]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-story-dot]')];
+    const show = (n: number) => {
+      images.forEach((img, i) => {
+        img.classList.toggle('opacity-0', i !== n);
+        img.classList.toggle('translate-y-4', i !== n);
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle('w-6', i === n); d.classList.toggle('bg-ink', i === n);
+        d.classList.toggle('w-2', i !== n); d.classList.toggle('bg-hairline', i !== n);
+      });
+      if (matchMedia('(min-width: 1024px)').matches) steps.forEach((s, i) => (s.style.opacity = i === n ? '1' : '0.3'));
+    };
+    // Active step = the one whose middle is closest to the middle of the screen.
+    let current = -1;
+    const update = () => {
+      const mid = innerHeight / 2;
+      let best = 0, bestDist = Infinity;
+      steps.forEach((s, i) => {
+        const r = s.getBoundingClientRect();
+        const d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestDist) { bestDist = d; best = i; }
+      });
+      if (best !== current) { current = best; show(best); }
+    };
+    addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    addEventListener('resize', update);
+    update();
+  });
+</script>

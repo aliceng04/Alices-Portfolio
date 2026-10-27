@@ -1,0 +1,133 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+import Tag from '../../components/Tag.astro';
+import Icon from '../../components/Icon.astro';
+import { blocks } from '../../components/blocks';
+import { getWork } from '../../lib/work';
+import { WORK_TYPES } from '../../lib/types';
+import { typeTone } from '../../lib/tags';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const work = await getWork();
+  return work.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: work[(i + 1) % work.length] },
+  }));
+}
+
+const { entry, next } = Astro.props;
+const { Content, headings } = await render(entry);
+const d = entry.data;
+const toc = headings.filter((h) => h.depth === 2);
+const meta = [
+  ['Role', d.role],
+  ['Timeline', d.timeline],
+  ['Type', WORK_TYPES[d.type]],
+  ['Skills', d.skills.join(' · ')],
+].filter(([, v]) => v);
+---
+<Layout title={d.title} description={d.summary}>
+  <div class="fixed inset-x-0 top-0 z-50 h-[3px] origin-left scale-x-0 bg-accent" data-progress aria-hidden="true"></div>
+  <article class="mx-auto max-w-[1120px] px-4 lg:px-0">
+    <header class="flex flex-col items-start gap-4 pb-8 pt-12 lg:gap-6 lg:pb-12 lg:pt-20">
+      <Button href={url('/work/')} variant="soft" size="sm"><Icon name="arrow-left" size={16} />All work</Button>
+      <div class="flex flex-wrap gap-2">
+        <Tag name={WORK_TYPES[d.type]} tone={typeTone(d.type)} solid />
+        {d.tags.map((t) => <Tag name={t} />)}
+      </div>
+      <h1 class="t-h1 max-w-[900px]">{d.title}</h1>
+      <p class="t-lead max-w-[720px] text-muted">{d.summary}</p>
+    </header>
+
+    {d.cover && (
+      <Image src={d.cover} alt={d.coverAlt} widths={[720, 1120, 2240]} sizes="(min-width: 1120px) 1120px, 100vw" class="mb-8 aspect-[16/9] w-full rounded-md bg-media object-cover lg:mb-12" />
+    )}
+
+    {(d.tldr || meta.length > 0) && (
+      <section id="tldr" class="flex scroll-mt-28 flex-col gap-6 rounded-md border border-accent-soft-border bg-accent-soft p-6 lg:p-8">
+        {d.tldr && (
+          <div class="flex flex-col gap-2">
+            <h2 class="t-title">TL;DR</h2>
+            <p class="t-body text-ink-soft max-w-[860px]">{d.tldr}</p>
+          </div>
+        )}
+        {meta.length > 0 && (
+          <dl class="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {meta.map(([k, v]) => (
+              <div class="flex flex-col gap-1">
+                <dt class="t-caption text-muted">{k}</dt>
+                <dd class="t-link">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </section>
+    )}
+
+    <div class="grid gap-16 pt-12 lg:grid-cols-[200px_minmax(0,1fr)] lg:pt-20">
+      <aside class="hidden lg:block">
+        {toc.length > 1 && (
+          <nav class="sticky top-32" aria-label="On this page">
+            <p class="t-caption mb-3 text-muted">On this page</p>
+            <ul class="flex flex-col" data-toc>
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} data-toc-link={h.slug}
+                    class="block border-l border-hairline py-1.5 pl-4 t-small text-muted transition hover:text-ink data-[active]:border-l-2 data-[active]:border-ink data-[active]:pl-[15px] data-[active]:t-link data-[active]:text-ink">
+                    {h.text.replace(/\.$/, '')}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+      </aside>
+
+      <div class="prose-post min-w-0 [&>p]:max-w-[720px] [&>ul]:max-w-[720px] [&>ol]:max-w-[720px] [&>h2]:max-w-[720px] [&>h3]:max-w-[720px]">
+        <Content components={blocks} />
+      </div>
+    </div>
+
+    {next && next.id !== entry.id && (
+      <a href={url(`/work/${next.id}/`)} class="group mt-20 flex flex-col gap-4 rounded-md border border-hairline-soft p-6 transition hover:border-hairline sm:flex-row sm:items-center lg:p-8">
+        <div class="flex flex-1 flex-col gap-1">
+          <span class="t-caption text-muted">Next</span>
+          <span class="t-h4">{next.data.title}</span>
+        </div>
+        <span class="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 t-link text-on-primary">Read next <Icon name="arrow-up-right" size={16} /></span>
+      </a>
+    )}
+  </article>
+</Layout>
+
+<script>
+  // Reading progress bar.
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  const setBar = () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    if (bar) bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  };
+  addEventListener('scroll', () => requestAnimationFrame(setBar), { passive: true });
+  setBar();
+
+  // Highlight the section currently on screen in the table of contents.
+  const links = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-toc-link]').forEach((a) => links.set(a.dataset.tocLink!, a));
+  if (links.size) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          links.forEach((a) => a.removeAttribute('data-active'));
+          links.get(e.target.id)?.setAttribute('data-active', '');
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px' },
+    );
+    links.forEach((_, id) => { const el = document.getElementById(id); if (el) io.observe(el); });
+  }
+</script>

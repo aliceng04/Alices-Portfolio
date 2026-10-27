@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import { url } from '../lib/url';
+---
+<Layout title="Page not found">
+  <section class="mx-auto flex max-w-[1120px] flex-col items-start gap-6 px-4 py-30 lg:px-0">
+    <p class="t-caption text-muted">404</p>
+    <h1 class="t-h1">This page doesn't exist.</h1>
+    <p class="t-lead text-muted">It may have moved. The work is still here.</p>
+    <Button href={url('/work/')}>See my work</Button>
+  </section>
+</Layout>

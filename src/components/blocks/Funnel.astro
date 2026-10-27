@@ -1,0 +1,21 @@
+---
+// AARRR (or any staged funnel): one card per stage, narrowing left to right.
+// <Funnel stages={[{ name: 'Acquisition', question: '…', metrics: ['…'] }]} />
+interface Stage { name: string; question: string; metrics: string[] }
+interface Props { stages: Stage[] }
+const { stages } = Astro.props;
+---
+<div class="block-wide grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+  {stages.map((s, i) => (
+    <section class="relative flex flex-col gap-3 rounded-sm border border-hairline bg-canvas p-4">
+      <span class="h-1.5 rounded-full bg-accent" style={`width:${100 - i * 15}%;opacity:${1 - i * 0.12}`}></span>
+      <div class="flex flex-col gap-1">
+        <span class="t-label text-accent">{String(i + 1).padStart(2, '0')} · {s.name}</span>
+        <span class="t-small font-semibold">{s.question}</span>
+      </div>
+      <ul class="flex flex-col gap-1.5">
+        {s.metrics.map((m) => <li class="flex gap-2 t-caption text-muted"><span class="mt-[6px] size-1 shrink-0 rounded-full bg-hairline"></span>{m}</li>)}
+      </ul>
+    </section>
+  ))}
+</div>

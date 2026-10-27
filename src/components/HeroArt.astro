@@ -1,0 +1,260 @@
+---
+// Hero: "How I work" — a self-playing story of the product loop.
+// Listen → Insight → Hypothesis → Design → Measure → Prioritise. Each card lights up in turn,
+// connectors draw between them, and each card animates what it means. Illustrative, not project data.
+// Drawn on a fixed 1120×500 stage and scaled to fit.
+const box = 'box rounded-md border border-hairline bg-canvas p-4 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.2)] transition-[border-color,transform,box-shadow] duration-500 dark:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.7)]';
+const steps = ['Listen', 'Insight', 'Hypothesis', 'Design', 'Measure', 'Prioritise'];
+const funnel: [string, number][] = [['Visit', 100], ['Sign up', 64], ['First goal', 41], ['Week 4', 23]];
+const spark = '0,40 25,36 50,38 75,28 100,30 125,20 150,22 175,10 200,6';
+---
+<div class="relative mx-auto w-full max-w-[1120px] select-none" data-hero-art aria-hidden="true">
+  <div class="overflow-hidden lg:overflow-visible" data-hero-clip>
+    <div class="relative h-[500px] w-[1120px] origin-top-left" data-hero-stage>
+
+      <!-- Connectors, drawn as each step is reached -->
+      <svg class="pointer-events-none absolute inset-0" width="1120" height="500" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4 5" stroke-linecap="round">
+        <path class="link" data-link="1" pathLength="1" d="M120 100 C120 125 140 128 140 148" />
+        <path class="link" data-link="2" pathLength="1" d="M252 210 C278 210 266 66 292 66" />
+        <path class="link" data-link="3" pathLength="1" d="M445 90 L445 128" />
+        <path class="link" data-link="4" pathLength="1" d="M600 210 C622 210 618 118 642 118" />
+        <path class="link" data-link="5" pathLength="1" d="M770 206 L770 262" />
+        <path class="link" data-link="6" pathLength="1" d="M872 330 C894 330 882 210 906 210" />
+      </svg>
+
+      <!-- 01 Listen -->
+      <div class="hc" data-card="0" style="left:20px;top:56px">
+        <div class="flex items-center gap-3 whitespace-nowrap rounded-full border border-hairline bg-canvas py-2 pl-2 pr-4 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.2)] box">
+          <span class="flex -space-x-2">
+            {['#ffd8a8', '#c5f6fa', '#d0bfff', '#b2f2bb', '#ffc9c9'].map((c, i) => <span class="av size-7 rounded-full border-2 border-canvas" style={`background:${c};--k:${i}`}></span>)}
+          </span>
+          <span class="t-label">User interviews</span>
+        </div>
+      </div>
+
+      <!-- 02 Insight -->
+      <div class="hc" data-card="1" style="left:40px;top:150px">
+        <div class="box rounded-sm p-5 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.3)]" style="width:212px;background:#fff3bf;color:#3b3205">
+          <p class="t-label">Insight</p>
+          <p class="mt-2 min-h-[72px] text-[17px] font-semibold leading-snug" data-type="&quot;Users don&#39;t need more features. They need the next step.&quot;">"Users don't need more features. They need the next step."</p>
+        </div>
+      </div>
+
+      <!-- 03 Hypothesis -->
+      <div class="hc" data-card="2" style="left:292px;top:40px">
+        <div class="flex items-center gap-2 whitespace-nowrap rounded-full border border-hairline bg-canvas px-3 py-2.5 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.2)] box">
+          {['Hypothesis', 'Test', 'Learn'].map((t, i) => (
+            <>
+              {i > 0 && <span class="text-muted">→</span>}
+              <span class="loop t-label rounded-full bg-canvas-soft px-2.5 py-1 transition-colors duration-300" data-loop={i}>{t}</span>
+            </>
+          ))}
+        </div>
+      </div>
+
+      <!-- 04 Design -->
+      <div class="hc" data-card="3" style="left:300px;top:130px">
+        <div class={box} style="width:300px">
+          <p class="t-caption mb-3 text-muted">User flow</p>
+          <svg viewBox="0 0 268 110" class="w-full">
+            <g class="flow-nodes" fill="var(--canvas-soft)" stroke="var(--hairline)" stroke-width="1.5">
+              <rect x="2" y="38" width="62" height="34" rx="9" /><rect x="198" y="4" width="66" height="34" rx="9" /><rect x="198" y="72" width="66" height="34" rx="9" />
+              <path d="M131 30 L156 55 L131 80 L106 55 Z" fill="var(--canvas)" stroke="var(--ink)" />
+            </g>
+            <g stroke="var(--ink)" stroke-width="1.5" fill="none" stroke-linecap="round">
+              <path class="draw" pathLength="1" d="M64 55 H104" /><path class="draw" pathLength="1" style="--k:1" d="M156 55 C176 55 176 21 196 21" /><path class="draw" pathLength="1" style="--k:2" d="M156 55 C176 55 176 89 196 89" />
+            </g>
+            <g font-family="Inter Variable, sans-serif" font-size="11" font-weight="600" fill="var(--ink)" text-anchor="middle">
+              <text x="33" y="59">Sign up</text><text x="131" y="59">Goal?</text><text x="231" y="25">Plan</text><text x="231" y="93">Explore</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 05 Measure: funnel -->
+      <div class="hc" data-card="4" style="left:642px;top:40px">
+        <div class={box} style="width:256px">
+          <p class="t-caption mb-3 text-muted">Activation funnel</p>
+          {funnel.map(([l, v], i) => (
+            <div class="mb-2 flex items-center gap-3">
+              <span class="t-caption w-16 shrink-0 text-muted">{l}</span>
+              <span class="bar h-3 rounded-full bg-accent" style={`--w:${v * 1.25}px;--k:${i};opacity:${0.35 + v / 160}`}></span>
+              <span class="t-label">{v}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 05 Measure: metric -->
+      <div class="hc" data-card="5" style="left:652px;top:262px">
+        <div class={box} style="width:220px">
+          <p class="t-caption text-muted">Weekly active users</p>
+          <div class="mt-1 flex items-end gap-2"><span class="t-h3 tabular-nums" data-metric>64%</span><span class="lift t-label mb-1 text-accent">↑ 18 pts</span></div>
+          <svg viewBox="0 0 200 48" class="mt-3 h-12 w-full">
+            <polyline points={`${spark} 200,48 0,48`} fill="var(--accent)" class="area" opacity="0.08" />
+            <polyline class="draw" pathLength="1" points={spark} fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- 06 Prioritise -->
+      <div class="hc" data-card="6" style="left:906px;top:140px">
+        <div class={box} style="width:200px">
+          <p class="t-caption mb-3 text-muted">Roadmap</p>
+          <div class="relative grid grid-cols-3 gap-2">
+            {[['Now', 2], ['Next', 3], ['Later', 1]].map(([h, n]) => (
+              <div class="flex flex-col gap-1.5">
+                <span class="t-label">{h}</span>
+                {Array.from({ length: Number(n) }, () => <span class="h-5 rounded-[6px] bg-canvas-soft"></span>)}
+              </div>
+            ))}
+            <!-- the item that gets prioritised: starts in Next, slides into Now -->
+            <span class="mover absolute h-5 rounded-[6px] bg-accent" style="left:0;top:22px;width:calc((100% - 16px) / 3)"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step bar -->
+  <ol class="mx-auto mt-6 flex max-w-full flex-wrap justify-center gap-x-1 gap-y-2 px-2" data-hero-steps>
+    {steps.map((s, i) => (
+      <li class="step flex items-center gap-1 rounded-full px-3 py-1.5 t-label text-muted transition-colors duration-300" data-step={i}>
+        <span class="tabular-nums opacity-60">{String(i + 1).padStart(2, '0')}</span>{s}
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .hc { position: absolute; transform: translate(calc(var(--mx, 0) * var(--d, 1) * 10px), calc(var(--my, 0) * var(--d, 1) * 8px)); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .hc[data-card="1"], .hc[data-card="5"] { --d: 1.6; }
+  .hc[data-card="2"], .hc[data-card="6"] { --d: 0.6; }
+
+  /* Card states: waiting (dim) → current (accent edge, lifted) → done. */
+  .hc .box { opacity: 0.35; transform: translateY(10px) scale(0.97); transition: opacity 0.5s, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.4s; }
+  .hc.on .box { opacity: 1; transform: none; }
+  .hc.cur .box { border-color: var(--accent); transform: translateY(-4px); }
+
+  /* Connectors draw in. */
+  .link { stroke-dashoffset: 1; stroke-dasharray: 1; transition: stroke-dashoffset 0.7s ease; }
+  .link.on { stroke-dashoffset: 0; }
+
+  /* 01 avatars pop in */
+  .av { transform: scale(0); transition: transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); transition-delay: calc(var(--k) * 120ms); }
+  .on .av { transform: scale(1); }
+  /* 03 loop highlight */
+  .loop.lit { background: var(--primary); color: var(--on-primary); }
+  /* 04 flow draws */
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 0.7s ease; transition-delay: calc(var(--k, 0) * 200ms + 150ms); }
+  .on .draw { stroke-dashoffset: 0; }
+  /* 05 bars grow, area fades in */
+  .bar { width: 0; transition: width 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: calc(var(--k) * 120ms); }
+  .on .bar { width: var(--w); }
+  .area { opacity: 0; transition: opacity 0.8s 0.4s; }
+  .on .area { opacity: 0.08; }
+  .lift { opacity: 0; transition: opacity 0.4s 0.9s; }
+  .on .lift { opacity: 1; }
+  /* 06 item moves from Next to Now */
+  .mover { transform: translateX(calc(100% + 8px)); transition: transform 0.8s cubic-bezier(0.6, 0, 0.2, 1) 0.3s; }
+  .on .mover { transform: translateX(0); }
+
+  .step.lit { background: var(--primary); color: var(--on-primary); }
+  .step.done { color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hc, .hc .box, .link, .av, .draw, .bar, .area, .lift, .mover { transition: none !important; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-hero-art]');
+  if (root) {
+    const stage = root.querySelector<HTMLElement>('[data-hero-stage]')!;
+    const clip = root.querySelector<HTMLElement>('[data-hero-clip]')!;
+    const cards = [...root.querySelectorAll<HTMLElement>('[data-card]')];
+    const links = [...root.querySelectorAll<SVGElement>('[data-link]')];
+    const stepEls = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+    const loops = [...root.querySelectorAll<HTMLElement>('[data-loop]')];
+    const metric = root.querySelector<HTMLElement>('[data-metric]')!;
+    const typed = root.querySelector<HTMLElement>('[data-type]')!;
+    const quote = typed.dataset.type!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Fit the fixed 1120×500 stage; never below 55% so text stays legible (sides crop instead).
+    const fit = () => {
+      const w = clip.clientWidth;
+      const s = Math.max(0.55, Math.min(1, w / 1120));
+      stage.style.transform = `translateX(${Math.min(0, (w - 1120 * s) / 2)}px) scale(${s})`;
+      clip.style.height = `${500 * s}px`;
+    };
+    fit();
+    addEventListener('resize', fit);
+
+    // Card index → step-bar index (funnel and metric are both "Measure").
+    const stepOf = [0, 1, 2, 3, 4, 4, 5];
+    const timers: number[] = [];
+    const later = (ms: number, fn: () => void) => timers.push(window.setTimeout(fn, ms));
+
+    // Both run on the same cancellable timers as the story, so a loop reset stops them cleanly.
+    const countMetric = () => {
+      for (let k = 0; k <= 18; k++) later(k * 50, () => { metric.textContent = `${64 + k}%`; });
+    };
+    const typeQuote = () => {
+      typed.textContent = '';
+      for (let k = 1; k <= quote.length; k++) later(k * 28, () => { typed.textContent = quote.slice(0, k); });
+    };
+
+    const reach = (i: number) => {
+      cards.forEach((c) => c.classList.remove('cur'));
+      cards[i].classList.add('on', 'cur');
+      if (i > 0) links[i - 1]?.classList.add('on');
+      stepEls.forEach((s, k) => {
+        s.classList.toggle('lit', k === stepOf[i]);
+        s.classList.toggle('done', k < stepOf[i]);
+      });
+      if (i === 2) loops.forEach((l, k) => later(k * 450, () => { loops.forEach((x) => x.classList.remove('lit')); l.classList.add('lit'); }));
+      if (i === 1) typeQuote();
+      if (i === 5) countMetric();
+    };
+
+    const reset = () => {
+      cards.forEach((c) => c.classList.remove('on', 'cur'));
+      links.forEach((l) => l.classList.remove('on'));
+      loops.forEach((l) => l.classList.remove('lit'));
+      stepEls.forEach((s) => s.classList.remove('lit', 'done'));
+      metric.textContent = '64%';
+      typed.textContent = '';
+    };
+
+    const STEP = 1500;
+    const play = () => {
+      timers.splice(0).forEach(clearTimeout);
+      reset();
+      cards.forEach((_, i) => later(400 + i * STEP, () => reach(i)));
+      later(400 + cards.length * STEP + 2500, play); // hold the finished picture, then loop
+    };
+
+    if (reduce) {
+      cards.forEach((c) => c.classList.add('on'));
+      links.forEach((l) => l.classList.add('on'));
+      loops[0]?.classList.add('lit');
+      metric.textContent = '82%';
+      typed.textContent = quote;
+    } else {
+      // Only play while the hero is on screen.
+      let running = false;
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting && !running) { running = true; play(); }
+        if (!e.isIntersecting && running) { running = false; timers.splice(0).forEach(clearTimeout); }
+      }).observe(root);
+
+      if (matchMedia('(pointer: fine)').matches) {
+        addEventListener('pointermove', (e) => {
+          root.style.setProperty('--mx', String((e.clientX / innerWidth - 0.5) * 2));
+          root.style.setProperty('--my', String((e.clientY / innerHeight - 0.5) * 2));
+        }, { passive: true });
+      }
+    }
+  }
+</script>

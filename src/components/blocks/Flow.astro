@@ -1,0 +1,78 @@
+---
+// A lifecycle as a vertical timeline: each step says what happens, who moves it, where the money is,
+// and, on the right, what happens when it goes wrong. The line fills as you scroll.
+// <Flow steps={[{ status: 'To ship', who: 'Seller', what: '…', money: 'In escrow', moneyTone: 'hold', branch: { when: '…', then: '…' } }]} />
+type Tone = 'hold' | 'released' | 'refund' | 'none';
+interface Branch { when: string; then: string; tone?: 'error' | 'alt' }
+interface Step { status: string; who?: string; what: string; money?: string; moneyTone?: Tone; branch?: Branch; final?: boolean }
+interface Props { steps: Step[]; branchLabel?: string; caption?: string }
+const { steps, branchLabel = 'If it goes wrong', caption } = Astro.props;
+const moneyClass: Record<Tone, string> = { hold: 'tag tag-amber', released: 'tag tag-green', refund: 'tag tag-pink', none: 'tag tag-blue' };
+---
+<figure class="block-wide" data-flow>
+  <div class="mb-3 hidden gap-6 pl-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
+    <span class="t-label text-muted">Step</span>
+    <span class="t-label text-muted">{branchLabel}</span>
+  </div>
+  <ol class="relative flex flex-col gap-3">
+    <span class="absolute bottom-6 left-[15px] top-6 w-0.5 rounded-full bg-hairline" aria-hidden="true"></span>
+    <span class="flow-fill absolute left-[15px] top-6 w-0.5 rounded-full bg-accent" aria-hidden="true"></span>
+    {steps.map((s, i) => (
+      <li class="flow-step relative grid gap-3 pl-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-6" data-reveal style={`--delay:${Math.min(i, 3) * 0.06}s`}>
+        <span class:list={['flow-dot absolute left-0 top-4 inline-flex size-8 items-center justify-center rounded-full border-2 border-hairline bg-canvas t-label text-muted', s.final && 'is-final']}>{i + 1}</span>
+        <div class="flex flex-col gap-2 rounded-sm border border-hairline bg-canvas p-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="t-title">{s.status}</span>
+            {s.who && <span class="inline-flex h-6 items-center rounded-full bg-canvas-soft px-2.5 t-caption text-muted">{s.who}</span>}
+          </div>
+          <p class="t-small text-ink-soft" set:html={s.what} />
+          {s.money && <span class:list={['inline-flex h-6 w-fit items-center rounded-full px-2.5 t-caption font-semibold', moneyClass[s.moneyTone ?? 'hold']]}>{s.money}</span>}
+        </div>
+        {s.branch ? (
+          <div class:list={['flow-branch relative flex flex-col gap-1 self-start rounded-sm border border-dashed p-4', s.branch.tone === 'alt' ? 'border-hairline bg-canvas-soft' : 'is-error']}>
+            <span class="t-small text-muted" set:html={s.branch.when} />
+            <span class="t-small font-semibold" set:html={`→ ${s.branch.then}`} />
+          </div>
+        ) : <div class="hidden lg:block"></div>}
+      </li>
+    ))}
+  </ol>
+  {caption && <figcaption class="t-caption mt-4 text-muted">{caption}</figcaption>}
+</figure>
+
+<style>
+  .flow-branch.is-error { border-color: color-mix(in srgb, #d9363e 45%, transparent); background: color-mix(in srgb, #d9363e 6%, var(--canvas)); }
+  .flow-dot { transition: background-color 0.4s, border-color 0.4s, color 0.4s, transform 0.4s cubic-bezier(0.3, 1.6, 0.5, 1); }
+  .flow-step.is-past .flow-dot { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: scale(1.06); }
+  .flow-fill { height: 0; transition: height 0.15s linear; }
+  @media (min-width: 1024px) {
+    /* A short stub joins each step to its branch. */
+    .flow-branch::before { content: ''; position: absolute; left: -24px; top: 28px; width: 24px; border-top: 1px dashed var(--hairline); }
+  }
+</style>
+
+<script>
+  // Fill the line down to the step nearest the middle of the screen; light up every dot it has passed.
+  document.querySelectorAll<HTMLElement>('[data-flow]').forEach((root) => {
+    const list = root.querySelector('ol')!;
+    const fill = root.querySelector<HTMLElement>('.flow-fill')!;
+    const steps = [...root.querySelectorAll<HTMLElement>('.flow-step')];
+    const dots = steps.map((s) => s.querySelector<HTMLElement>('.flow-dot')!);
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const top = list.getBoundingClientRect().top, mark = innerHeight * 0.55;
+      let h = 0;
+      dots.forEach((d, i) => {
+        const r = d.getBoundingClientRect(), centre = r.top + r.height / 2;
+        const past = centre < mark;
+        steps[i].classList.toggle('is-past', past);
+        if (past) h = centre - top - 24;
+      });
+      fill.style.height = `${Math.max(0, h)}px`;
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update);
+    update();
+  });
+</script>
