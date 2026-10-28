@@ -28,5 +28,5 @@ export const profile = {
   footerLine: "Let's build with heart.",
   // TODO: replace with your real contact details before publishing.
   email: 'hello@example.com',
-  linkedin: 'https://www.linkedin.com/in/your-profile',
+  linkedin: 'https://www.linkedin.com/in/alice-nguyen2104/',
 };
