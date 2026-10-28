@@ -46,42 +46,6 @@ Each group gets its own front end, all served by one shared backend.
   { title: 'Admin platform · Admin Portal (web)', points: ['<strong>Operations:</strong> approve and moderate shops and products', '<strong>Customer support:</strong> decide disputes, force refunds', '<strong>Finance:</strong> commission and payouts · <strong>Marketing:</strong> platform vouchers'] },
 ]} />
 
-### End-user app.
-
-The buyer's path is short on purpose: find it, trust the shop, pay for everything in one go.
-
-<Gallery
-  images={[
-    { src: buyerHome, alt: 'Home with search, an 11.11 sale banner, category shortcuts and hot deals', caption: '1 · Home: search first, then the platform’s sale, categories and today’s deals.' },
-    { src: buyerCart, alt: 'Cart grouped by shop with a price-change notice and a platform voucher', caption: '2 · Cart: grouped by shop, with price changes flagged before checkout.' },
-    { src: buyerShop, alt: 'Shop page with cover, rating, follow button, follower voucher and picks', caption: '3 · Shop: rating, followers and a follower gift, so a buyer can trust a shop they have never heard of.' },
-    { src: buyerVoucher, alt: 'Select vouchers: one platform voucher, one per shop, and the ones not yet eligible with what is missing', caption: '4 · Vouchers: one platform voucher and one per shop, and each ineligible voucher says exactly what is missing.' },
-    { src: buyerSuccess, alt: 'Order placed: total paid, voucher applied, delivery estimate and the two orders, one per shop', caption: '5 · Order placed: one payment, split into one order per shop.' },
-  ]}
-  caption="End-user app, from home to a placed order. Click any screen to enlarge."
-/>
-
-### Seller platform.
-
-Sellers run the business from Seller Center: see how sales are going, open a shop, list products and ship orders.
-
-<ScreenTabs screens={[
-  { src: sellerData, label: 'Data', alt: 'Seller data dashboard: today’s sales cards, sales by day chart, compare by period and orders by day', caption: 'Data: today against yesterday and last week, sales by day, and this period against the last.' },
-  { src: sellerRegister, label: 'Open a shop', alt: 'Seller registration, step 1 of 3: account details, with the benefits of selling on the left', caption: 'Open a shop: three steps (account, shop, business), then an admin approves it before it can sell.' },
-  { src: sellerAddProduct, label: 'Add product', alt: 'Add product: basic info, images, variants with a SKU table, a publish checklist, shipping and a buyer preview', caption: 'Add product: two variant tiers become 12 SKUs, a checklist covers everything publishing needs, and a preview shows the buyer’s card.' },
-  { src: sellerOrders, label: 'Orders', alt: 'Orders: status cards, a To ship table with product photos, ship-by dates and bulk Arrange shipment', caption: 'Orders: what needs action first, with the deadline that cancels the order shown on every row.' },
-]} />
-
-### Admin platform.
-
-The Admin Portal is split by role: only Finance can change commission and approve payouts, only Customer support can decide disputes, and every change lands in an audit log.
-
-<ScreenTabs screens={[
-  { src: adminModeration, label: 'Product moderation', alt: 'Moderation queue of auto-flagged products with the matching banned keyword', caption: 'Operations: products go live at once; anything matching a banned keyword is flagged here for review.' },
-  { src: adminDispute, label: 'Dispute', alt: 'Dispute with buyer claim and photos, seller response, and an approve or reject decision', caption: 'Customer support: both sides’ evidence on one screen, and a decision with a reason sent to both.' },
-  { src: adminPayout, label: 'Weekly payout', alt: 'Weekly payout batch with sellers, totals, commission and a reconciliation warning', caption: 'Finance: the weekly batch is blocked until reconciliation mismatches are resolved.' },
-]} />
-
 ## 4. MVP scope.
 
 One rule decided the scope: the MVP covers what is needed to **complete, pay for and refund real orders**. Anything that only grows traffic or engagement waits.
@@ -98,7 +62,24 @@ One rule decided the scope: the MVP covers what is needed to **complete, pay for
   ]}
 />
 
-## 5. Sitemap.
+## 5. Business model.
+
+Shopay earns a commission on each **completed** order. Cancelled and fully refunded orders pay none, so the platform only makes money when the buyer is happy.
+
+<Comparison
+  columns={['Per order', 'How it is calculated']}
+  rows={[
+    ['Seller base', 'Item total after product discount − shop voucher'],
+    ['Commission', 'Commission rate × seller base (rate per category, frozen at payment)'],
+    ['Seller payout', 'Seller base − commission'],
+    ['Buyer pays', 'Seller base − platform voucher share + shipping fee'],
+    ['Platform revenue', 'Commission − platform voucher share'],
+  ]}
+/>
+
+Platform vouchers are paid for by the platform, never by the seller, and shipping is passed straight through to the carrier. The default commission rate is still an open question; the mock-ups use 5% as a placeholder.
+
+## 6. Sitemap.
 
 Three sitemaps, one per product. The buyer app is built around the path to an order; Seller Center and the Admin Portal are built around the jobs each team does every day.
 
@@ -147,7 +128,7 @@ Three sitemaps, one per product. The buyer app is built around the path to an or
   },
 ]} />
 
-## 6. Order flow.
+## 7. Order flow.
 
 Every order follows one path, and every step answers three questions: **who moves it, where the money is, and what happens if it goes wrong.** A checkout with items from three shops becomes three orders that move on their own.
 
@@ -170,7 +151,7 @@ Every order follows one path, and every step answers three questions: **who move
 - **Escrow until Completed.** The seller only gets paid once the buyer has the item, or has had 7 days to complain. That single rule is what lets a buyer trust a shop they have never heard of.
 - **No cancelling once it ships.** After pickup, the only path is a return. Two ways to undo the same order would mean two sets of rules, and more disputes.
 
-## 7. Return flow.
+## 8. Return flow.
 
 Returns are where marketplaces lose trust, so the flow gives every side a deadline and makes silence count.
 
@@ -193,24 +174,47 @@ Returns are where marketplaces lose trust, so the flow gives every side a deadli
 - **The platform decides disputes, not the seller.** Customer support sees both sides’ evidence on one screen, and their decision is final.
 - **No change of mind in the MVP.** Every accepted reason is a real problem with the order (not received, wrong, damaged, not as described, missing parts), which keeps the first version of the rules simple enough to run.
 
-## 8. Business model.
+## 9. Key screens.
 
-Shopay earns a commission on each **completed** order. Cancelled and fully refunded orders pay none, so the platform only makes money when the buyer is happy.
+What the flows above look like in each product.
 
-<Comparison
-  columns={['Per order', 'How it is calculated']}
-  rows={[
-    ['Seller base', 'Item total after product discount − shop voucher'],
-    ['Commission', 'Commission rate × seller base (rate per category, frozen at payment)'],
-    ['Seller payout', 'Seller base − commission'],
-    ['Buyer pays', 'Seller base − platform voucher share + shipping fee'],
-    ['Platform revenue', 'Commission − platform voucher share'],
+### End-user app.
+
+The buyer's path is short on purpose: find it, trust the shop, pay for everything in one go.
+
+<Gallery
+  images={[
+    { src: buyerHome, alt: 'Home with search, an 11.11 sale banner, category shortcuts and hot deals', caption: '1 · Home: search first, then the platform’s sale, categories and today’s deals.' },
+    { src: buyerCart, alt: 'Cart grouped by shop with a price-change notice and a platform voucher', caption: '2 · Cart: grouped by shop, with price changes flagged before checkout.' },
+    { src: buyerShop, alt: 'Shop page with cover, rating, follow button, follower voucher and picks', caption: '3 · Shop: rating, followers and a follower gift, so a buyer can trust a shop they have never heard of.' },
+    { src: buyerVoucher, alt: 'Select vouchers: one platform voucher, one per shop, and the ones not yet eligible with what is missing', caption: '4 · Vouchers: one platform voucher and one per shop, and each ineligible voucher says exactly what is missing.' },
+    { src: buyerSuccess, alt: 'Order placed: total paid, voucher applied, delivery estimate and the two orders, one per shop', caption: '5 · Order placed: one payment, split into one order per shop.' },
   ]}
+  caption="End-user app, from home to a placed order. Click any screen to enlarge."
 />
 
-Platform vouchers are paid for by the platform, never by the seller, and shipping is passed straight through to the carrier. The default commission rate is still an open question; the mock-ups use 5% as a placeholder.
+### Seller platform.
 
-## 9. Success metrics.
+Sellers run the business from Seller Center: see how sales are going, open a shop, list products and ship orders.
+
+<ScreenTabs screens={[
+  { src: sellerData, label: 'Data', alt: 'Seller data dashboard: today’s sales cards, sales by day chart, compare by period and orders by day', caption: 'Data: today against yesterday and last week, sales by day, and this period against the last.' },
+  { src: sellerRegister, label: 'Open a shop', alt: 'Seller registration, step 1 of 3: account details, with the benefits of selling on the left', caption: 'Open a shop: three steps (account, shop, business), then an admin approves it before it can sell.' },
+  { src: sellerAddProduct, label: 'Add product', alt: 'Add product: basic info, images, variants with a SKU table, a publish checklist, shipping and a buyer preview', caption: 'Add product: two variant tiers become 12 SKUs, a checklist covers everything publishing needs, and a preview shows the buyer’s card.' },
+  { src: sellerOrders, label: 'Orders', alt: 'Orders: status cards, a To ship table with product photos, ship-by dates and bulk Arrange shipment', caption: 'Orders: what needs action first, with the deadline that cancels the order shown on every row.' },
+]} />
+
+### Admin platform.
+
+The Admin Portal is split by role: only Finance can change commission and approve payouts, only Customer support can decide disputes, and every change lands in an audit log.
+
+<ScreenTabs screens={[
+  { src: adminModeration, label: 'Product moderation', alt: 'Moderation queue of auto-flagged products with the matching banned keyword', caption: 'Operations: products go live at once; anything matching a banned keyword is flagged here for review.' },
+  { src: adminDispute, label: 'Dispute', alt: 'Dispute with buyer claim and photos, seller response, and an approve or reject decision', caption: 'Customer support: both sides’ evidence on one screen, and a decision with a reason sent to both.' },
+  { src: adminPayout, label: 'Weekly payout', alt: 'Weekly payout batch with sellers, totals, commission and a reconciliation warning', caption: 'Finance: the weekly batch is blocked until reconciliation mismatches are resolved.' },
+]} />
+
+## 10. Success metrics.
 
 The MVP succeeds if real sellers and buyers complete paid orders end to end and the platform keeps its commission. Targets will be set with the business owner.
 
@@ -227,7 +231,7 @@ The MVP succeeds if real sellers and buyers complete paid orders end to end and 
   ]}
 />
 
-## 10. What's next.
+## 11. What's next.
 
 The build follows the money, so each phase ends with something testable end to end:
 
